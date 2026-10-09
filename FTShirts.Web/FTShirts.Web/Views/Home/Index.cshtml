@@ -1,0 +1,33 @@
+﻿@model IEnumerable<FTShirts.Web.Models.Shirt>
+
+@{
+    ViewData["Title"] = "Catalogue";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome to FT-Shirts</h1>
+    <p>Shop for new and second-handed sport t-shirts .</p>
+</div>
+
+<div class="container mt-4">
+    <h2>Available</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Team</th>
+                <th>State</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var shirt in Model)
+            {
+                <tr>
+                    <td>@shirt.Team</td>
+                    <td>@(shirt.IsSecondHand ? "Second-handed" : "New")</td>
+                    <td>@shirt.Price.ToString("C")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
