@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FTShirts.Web")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b0d29b584dfb0ad0bb92209e8fbb219dd9990cee")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+caf9ce25e49b208bfd0ff1ff9462e0bcc3514919")]
 [assembly: System.Reflection.AssemblyProductAttribute("FTShirts.Web")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FTShirts.Web")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

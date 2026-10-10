@@ -1,4 +1,5 @@
-﻿@model IEnumerable<FTShirts.Web.Models.Shirt>
+﻿@using FTShirts.Web.Models
+@model FTShirts.Web.Models.Catalogue
 
 @{
     ViewData["Title"] = "Catalogue";
@@ -14,18 +15,42 @@
     <table class="table table-striped">
         <thead>
             <tr>
+                <th>ID</th>
                 <th>Team</th>
-                <th>State</th>
-                <th>Price</th>
+                <th>Size</th>
+                <th>Second-handed</th>
+                <th>Original Price</th>
+                <th>Offer</th>
+                <th>Discount</th>
+                <th>Final Price</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var shirt in Model)
+            @foreach (var item in Model)
             {
                 <tr>
-                    <td>@shirt.Team</td>
-                    <td>@(shirt.IsSecondHand ? "Second-handed" : "New")</td>
-                    <td>@shirt.Price.ToString("C")</td>
+                    <td>@item.TShirt.Id</td>
+                    <td>@item.TShirt.Team</td>
+                    <td>@item.TShirt.Size</td>
+                    <td>@(item.TShirt.IsSecondHand ? "Yes" : "No")</td>
+                    <td>
+                        @if (item.OfferType == Offer.Yes)
+                        {
+                            <del>@item.TShirt.Price.ToString("0.00") €</del>
+                        }
+                        else
+                        {
+                            <span>@item.TShirt.Price.ToString("0.00") €</span>
+                        }
+                    </td>
+
+                    <td>@item.OfferType</td>
+
+                    <td>@(item.OfferDiscount.HasValue ? item.OfferDiscount.Value + "%" : "-")</td>
+
+                    <td style="font-weight: bold; color: green;">
+                        @item.FinalPrice.ToString("0.00") €
+                    </td>
                 </tr>
             }
         </tbody>
