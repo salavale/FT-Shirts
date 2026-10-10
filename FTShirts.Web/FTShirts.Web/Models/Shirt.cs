@@ -3,6 +3,16 @@
     public enum SSize { S, M, L, XL, XXL }
     public class Shirt
     {
+        public Shirt(int id, string team, decimal price, bool secondHand, int?pNumber, string? pName, SSize size) 
+        {
+            Id = id;
+            Team = team;
+            Price = price;
+            IsSecondHand = secondHand;
+            PNumber = pNumber;
+            PName = pName;
+            Size = size;
+        }
         //Identifying number of the shirt.
         public int Id { get; set; }
         //Team from which the shirt is from.

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic
+﻿using System.Collections.Generic;
 namespace FTShirts.Web.Models
 {
     public static class CatalogueExtensions

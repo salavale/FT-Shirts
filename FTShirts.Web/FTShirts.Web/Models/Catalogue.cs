@@ -42,6 +42,28 @@ namespace FTShirts.Web.Models
             OfferType = offerType;
             OfferDiscount = discount;
         }
+        //Constructor to read from a csv file the data of a ItemCatalogue.
+        //The format must be:
+        // id, team, price, isSecondHand, pNumber, pName, size, offer, discount
+        //Where the seven first elements define a shirt and the other 2 the offertype and offerdiscount.
+        //this constructor was made by the LLM used in the project.
+        public CatalogueItem(string csvLine)
+        {
+            string[] data = csvLine.Split(',');
+
+            int id = int.Parse(data[0]);
+            string team = data[1];
+            decimal price = decimal.Parse(data[2], System.Globalization.CultureInfo.InvariantCulture);
+            bool isSecondHand = bool.Parse(data[3]);
+            int? pNumber = string.IsNullOrEmpty(data[4]) ? null : int.Parse(data[4]);
+            string? pName = string.IsNullOrEmpty(data[5]) ? null : data[5];
+            SSize size = Enum.Parse<SSize>(data[6]);
+
+            TShirt = new Shirt(id, team, price, isSecondHand, pNumber, pName, size);
+
+            OfferType = Enum.Parse<Offer>(data[7]);
+            OfferDiscount = string.IsNullOrEmpty(data[8]) ? null : int.Parse(data[8]);
+        }
     }
     public class Catalogue : IEnumerable<CatalogueItem>
     {
