@@ -9,21 +9,27 @@ namespace FTShirts.Web.Controllers
 {
     public class HomeController : Controller
     {
+        private static Catalogue _storeCatalogue = new Catalogue();
         public IActionResult Index()
         {
-            var items = new List<CatalogueItem>();
             string filePath = "./Data/shirts.csv";
 
             if (System.IO.File.Exists(filePath))
             { 
                 foreach (var line in System.IO.File.ReadLines(filePath)) 
                 {
-                    items.Add(new CatalogueItem(line));
+                    _storeCatalogue.AddItem(new CatalogueItem(line));
                 }
             }
-            Catalogue storeCatalogue = new Catalogue(items);
 
-            return View(storeCatalogue);
+            return View(_storeCatalogue);
+        }
+
+        public IActionResult Offers()
+        {
+            var sale = _storeCatalogue.GetItemsOnSale();
+
+            return View("Index", sale);
         }
 
         public IActionResult Privacy()
