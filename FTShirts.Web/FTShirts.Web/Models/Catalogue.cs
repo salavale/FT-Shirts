@@ -42,7 +42,6 @@ namespace FTShirts.Web.Models
             OfferType = offerType;
             OfferDiscount = discount;
         }
-    }
 
     public class Catalogue : IEnumerable<CatalogueItem>
     {
