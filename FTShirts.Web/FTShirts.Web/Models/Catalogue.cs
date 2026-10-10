@@ -42,7 +42,7 @@ namespace FTShirts.Web.Models
             OfferType = offerType;
             OfferDiscount = discount;
         }
-
+    }
     public class Catalogue : IEnumerable<CatalogueItem>
     {
         //We can consider making it private readonly
