@@ -12,8 +12,8 @@ namespace FTShirts.Web.Controllers
             shirts.Add( new Shirt {Id = 1, Team = "Real Madrid", Price = 89.99m, IsSecondHand = false });
             shirts.Add(new Shirt { Id = 2, Team = "Boca Juniors", Price = 45.00m, IsSecondHand = true });
             shirts.Add(new Shirt { Id = 3, Team = "Arsenal", Price = 95.50m, IsSecondHand = false });
-
-            return View(shirts);
+            Catalogue storeCatalogue = new Catalogue(shirts);
+            return View(storeCatalogue);
         }
 
         public IActionResult Privacy()
