@@ -58,6 +58,82 @@ namespace FTShirts.Web.Controllers
             return View();
         }
 
+        public IActionResult MemberRegister()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Login( string username, string password)
+        {
+            string filePath = "./Data/members.csv";
+            bool loginSuccess = false;
+
+            if (System.IO.File.Exists(filePath))
+            {
+                string expectedLine = username + "," + password;
+                loginSuccess = System.IO.File.ReadLines(filePath).Any(line => line == expectedLine);
+            }
+
+            if (loginSuccess)
+            {
+                Response.Cookies.Append("UserLogged", username);
+
+                return RedirectToAction("MemberIndex");
+            }
+
+            return Content("Login Failed. Incorrect username or password.");
+        }
+
+        [HttpPost]
+        public IActionResult Register( string newUsername, string newPassword)
+        {
+            string filePath = "./Data/members.csv";
+            if (System.IO.File.Exists(filePath))
+            {
+                if (System.IO.File.ReadLines(filePath).Any(line => line.StartsWith(newUsername + ","))){
+                    return Content("Login Failed. Username already taken.");
+                }
+
+            }
+            System.IO.File.AppendAllText(filePath, newUsername + "," + newPassword + "\n");
+            return RedirectToAction("MemberPage");
+        }
+
+        public IActionResult MemberIndex()
+        {
+            string memberLogged = Request.Cookies["UserLogged"];
+            if (string.IsNullOrEmpty(memberLogged))
+            {
+                return RedirectToAction("Index");
+            }
+
+            string filePath = "./Data/shirts.csv";
+            _storeCatalogue = new Catalogue();
+
+            if (System.IO.File.Exists(filePath))
+            {
+                foreach (var line in System.IO.File.ReadLines(filePath))
+                {
+                    _storeCatalogue.AddItem(new CatalogueItem(line));
+                }
+            }
+
+            return View(_storeCatalogue);
+        }
+
+        public IActionResult MemberSSearch(string team, bool onlyOffer)
+        {
+            var results = _storeCatalogue.GetItemsByTeam(team: team);
+
+            if (onlyOffer)
+            {
+                results = results.GetItemsOnSaleForMembers();
+            }
+
+            return View("MemberIndex", results);
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
