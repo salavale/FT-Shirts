@@ -13,6 +13,7 @@ namespace FTShirts.Web.Controllers
         public IActionResult Index()
         {
             string filePath = "./Data/shirts.csv";
+            _storeCatalogue = new Catalogue();
 
             if (System.IO.File.Exists(filePath))
             { 
@@ -27,7 +28,6 @@ namespace FTShirts.Web.Controllers
 
         public IActionResult Offers()
         {
-            string user = HttpContext.Session.GetString("UserLogged");
             var sale = _storeCatalogue.GetItemsOnSale();
 
             return View("Index", sale);
