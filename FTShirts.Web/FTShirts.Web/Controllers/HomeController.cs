@@ -44,7 +44,7 @@ namespace FTShirts.Web.Controllers
         [HttpGet]
         public IActionResult SSearch( string team, bool onlyOffer)
         {
-            var results = _storeCatalogue.GetItemsByTeam(team);
+            var results = _storeCatalogue.GetItemsByTeam(team: team);
 
             if (onlyOffer)
             {
