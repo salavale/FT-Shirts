@@ -27,7 +27,7 @@ namespace FTShirts.Web.Models
         {
             get
             {
-                if (OfferType == Offer.MemberOnly)
+                if (OfferType == Offer.MemberOnly || OfferType == Offer.Yes)
                 {
                     decimal discountMultiplier = 1m - (OfferDiscount.Value / 100m);
                     return TShirt.Price * discountMultiplier;
