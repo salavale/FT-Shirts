@@ -33,6 +33,14 @@ namespace FTShirts.Web.Controllers
             return View("Index", sale);
         }
 
+        [HttpGet]
+        public IActionResult Search( string team)
+        {
+            var results = _storeCatalogue.GetItemsByTeam(team);
+
+            return View("Index", results);
+        }
+
         public IActionResult MemberPage()
         {
             return View();

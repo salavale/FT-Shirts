@@ -12,5 +12,17 @@ namespace FTShirts.Web.Models
         {
             return catalogue.Where(item => item.OfferType == Offer.Yes || item.OfferType == Offer.MemberOnly);
         }
+
+        public static IEnumerable<CatalogueItem> GetItemsByTeam(this IEnumerable<CatalogueItem> catalogue, string team)
+        {
+            //If we introduce nothing, we return the whole catalogue
+            if (string.IsNullOrWhiteSpace(team))
+            {
+                return catalogue;
+            }
+
+            // Team, tEAM, tEaM, tEAM must return the same team.
+            return catalogue.Where(item => item.TShirt.Team.ToLower().Contains(team.ToLower()));
+        }
     }
 }
