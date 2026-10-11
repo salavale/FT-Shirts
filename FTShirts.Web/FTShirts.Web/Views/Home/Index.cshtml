@@ -9,14 +9,20 @@
     <h1 class="display-4">Welcome to FT-Shirts</h1>
     <p>Shop for new and second-handed sport t-shirts .</p>
 </div>
-<div class="mb-4" style="display: flex; gap: 10px;">
-    <a href="/Home/Index" class="btn btn-secondary">Ver Catálogo Completo</a>
-    <a href="/Home/Offers" class="btn btn-success">Ver Solo Ofertas</a>
-</div>
+
 <div class="container mt-4">
     <h2>Available</h2>
-    <form action="/Home/Search" method="get" class="d-flex" style="margin-left: auto;">
-        <input type="text" name="team" class="form-check search porposes" placeholder="Team" required />
+    <div class="mb-4" style="display: flex; gap: 10px;">
+        <a href="/Home/Index" class="btn btn-secondary">View whole catalogue</a>
+    </div>
+    <form action="/Home/SSearch" method="get" class="d-flex" style="margin-left: auto;">
+        <input type="text" name="team" class="form-check search" placeholder="Team"/>
+        <div class="form-check me-2 mb-0 d-flex align-items-center">
+            <input class="form-check-input me-1" type="checkbox" name="onlyOffer" value="true" id="checkOfertas">
+            <label class="form-check-label text-nowrap" for="checkOfertas" style="color: black;">
+                On Sale
+            </label>
+        </div>
         <button type="submit" class="btn btn-outline-success">Search</button>
     </form>
 

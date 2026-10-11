@@ -41,6 +41,18 @@ namespace FTShirts.Web.Controllers
             return View("Index", results);
         }
 
+        [HttpGet]
+        public IActionResult SSearch( string team, bool onlyOffer)
+        {
+            var results = _storeCatalogue.GetItemsByTeam(team);
+
+            if (onlyOffer)
+            {
+                results = results.GetItemsOnSale();
+            }
+
+            return View("Index", results);
+        }
         public IActionResult MemberPage()
         {
             return View();
