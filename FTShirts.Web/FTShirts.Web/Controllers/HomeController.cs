@@ -27,12 +27,13 @@ namespace FTShirts.Web.Controllers
 
         public IActionResult Offers()
         {
+            string user = HttpContext.Session.GetString("UserLogged");
             var sale = _storeCatalogue.GetItemsOnSale();
 
             return View("Index", sale);
         }
 
-        public IActionResult Privacy()
+        public IActionResult MemberPage()
         {
             return View();
         }

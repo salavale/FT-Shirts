@@ -7,5 +7,10 @@ namespace FTShirts.Web.Models
         {
             return catalogue.Where(item => item.OfferType == Offer.Yes);
         }
+    
+        public static IEnumerable<CatalogueItem> GetItemsOnSaleForMembers(this IEnumerable<CatalogueItem> catalogue)
+        {
+            return catalogue.Where(item => item.OfferType == Offer.Yes || item.OfferType == Offer.MemberOnly);
+        }
     }
 }
