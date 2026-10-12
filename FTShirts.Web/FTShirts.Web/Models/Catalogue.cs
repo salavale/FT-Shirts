@@ -11,6 +11,7 @@ namespace FTShirts.Web.Models
         public Shirt TShirt { get; set; }
         public Offer OfferType { get; set; }
         public int? OfferDiscount { get; set; }
+        public List<string> Tags { get; }
         public decimal FinalPrice
         {
             get
@@ -41,6 +42,7 @@ namespace FTShirts.Web.Models
             TShirt = shirt;
             OfferType = offerType;
             OfferDiscount = discount;
+            Tags = new List<string>();
         }
         //Constructor to read from a csv file the data of a ItemCatalogue.
         //The format must be:
@@ -49,6 +51,7 @@ namespace FTShirts.Web.Models
         //this constructor was made by the LLM used in the project.
         public CatalogueItem(string csvLine)
         {
+            Tags = new List<string>();
             string[] data = csvLine.Split(',');
 
             int id = int.Parse(data[0]);
@@ -63,6 +66,14 @@ namespace FTShirts.Web.Models
 
             OfferType = Enum.Parse<Offer>(data[7]);
             OfferDiscount = string.IsNullOrEmpty(data[8]) ? null : int.Parse(data[8]);
+            for (var i = 9; i < data.Length; i++)
+            {
+                if (!string.IsNullOrEmpty(data[i]))
+                {
+                    Tags.Add(data[i].Trim());
+                }
+                
+            }
         }
     }
     public class Catalogue : IEnumerable<CatalogueItem>
