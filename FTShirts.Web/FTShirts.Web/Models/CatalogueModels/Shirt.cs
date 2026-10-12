@@ -1,5 +1,5 @@
 ﻿using FTShirts.Web.enums;
-namespace FTShirts.Web.Models
+namespace FTShirts.Web.Models.CatalogueModels
 {
 
     //This record is immutable.

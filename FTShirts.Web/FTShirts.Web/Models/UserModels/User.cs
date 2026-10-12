@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
-namespace FTShirts.Web.Models
+﻿using FTShirts.Web.Models.CatalogueModels;
+using System.Collections.Generic;
+namespace FTShirts.Web.Models.UserModels
 {
     public class User
     {

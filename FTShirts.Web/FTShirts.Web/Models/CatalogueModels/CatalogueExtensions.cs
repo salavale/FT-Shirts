@@ -1,6 +1,6 @@
 ﻿using FTShirts.Web.enums;
 using System.Collections.Generic;
-namespace FTShirts.Web.Models
+namespace FTShirts.Web.Models.CatalogueModels
 {
     public static class CatalogueExtensions
     {

@@ -1,9 +1,6 @@
-﻿@page
-@{
-}
-<div class="card p-3 mt-4" style="max-width: 400px;">
+﻿<div class="card p-3 mt-4" style="max-width: 400px;">
     <h3>Member Login</h3>
-    <form action="/Home/Login" method="post">
+    <form action="/User/Login" method="post">
         <div class="mb-2">
             <label>Username:</label>
             <input type="text" name="username" class="form-control" required />
@@ -15,6 +12,6 @@
         <button type="submit" class="btn btn-primary w-100">Login</button>
     </form>
     <div class="mb-4" style="display: flex; gap: 10px;">
-        <a href="/Home/MemberRegister" class="btn btn-secondary">Create new account</a>
+        <a href="/User/MemberRegister" class="btn btn-secondary">Create new account</a>
     </div>
 </div>

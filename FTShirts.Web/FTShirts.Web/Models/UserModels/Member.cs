@@ -1,6 +1,7 @@
 ﻿using FTShirts.Web.enums;
+using FTShirts.Web.Models.CatalogueModels;
 using System.Collections.Generic;
-namespace FTShirts.Web.Models
+namespace FTShirts.Web.Models.UserModels
 {
     public class Member : User
     {

@@ -1,6 +1,6 @@
 ﻿using FTShirts.Web.enums;
 
-namespace FTShirts.Web.Models
+namespace FTShirts.Web.Models.CatalogueModels
 {
     //Our list on the catalogue will be the shirt, if it has any offer and the amount is discounted
     public struct CatalogueItem

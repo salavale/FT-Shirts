@@ -1,7 +1,7 @@
 ﻿using FTShirts.Web.enums;
 using System.Collections;
 
-namespace FTShirts.Web.Models
+namespace FTShirts.Web.Models.CatalogueModels
 {
     public class Catalogue : IEnumerable<CatalogueItem>
     {
