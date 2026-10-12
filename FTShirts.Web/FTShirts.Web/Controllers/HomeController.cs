@@ -181,6 +181,17 @@ namespace FTShirts.Web.Controllers
                 Response.Cookies.Append("GuestUser", user);
                 _activeUsers.Add(new User(user));
             }
+            else if (!_activeUsers.Any(u => u.Username == user))
+            {
+                if (activeMember)
+                {
+                    _activeUsers.Add(new Member(user));
+                }
+                else
+                {
+                    _activeUsers.Add(new User(user));
+                }
+            }
 
             User activeUser = _activeUsers.First(m => m.Username == user);
 
@@ -192,13 +203,31 @@ namespace FTShirts.Web.Controllers
 
             if (activeMember)
             {
-                return View("MemberIndex");
+                return RedirectToAction("MemberIndex");
             }
-            return View("Index");
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult ShoppingCart()
+        {
+            string user = Request.Cookies["UserLogged"];
+            if (string.IsNullOrEmpty(user))
+            {
+                user = Request.Cookies["GuestUser"];
+            }
+
+            if (string.IsNullOrEmpty(user) || !_activeUsers.Any(u => u.Username == user))
+            {
+                return View(new User());
+            }
+
+            User activeUser = _activeUsers.First(u => u.Username == user);
+
+            return View(activeUser);
         }
 
 
-            [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
