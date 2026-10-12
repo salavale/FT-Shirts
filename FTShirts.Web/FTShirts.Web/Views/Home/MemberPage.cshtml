@@ -1,0 +1,20 @@
+﻿@page
+@{
+}
+<div class="card p-3 mt-4" style="max-width: 400px;">
+    <h3>Member Login</h3>
+    <form action="/Home/Login" method="post">
+        <div class="mb-2">
+            <label>Username:</label>
+            <input type="text" name="username" class="form-control" required />
+        </div>
+        <div class="mb-2">
+            <label>Password:</label>
+            <input type="password" name="password" class="form-control" required />
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Login</button>
+    </form>
+    <div class="mb-4" style="display: flex; gap: 10px;">
+        <a href="/Home/MemberRegister" class="btn btn-secondary">Create new account</a>
+    </div>
+</div>
