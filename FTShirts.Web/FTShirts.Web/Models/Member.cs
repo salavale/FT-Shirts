@@ -1,24 +1,20 @@
 ﻿using System.Collections.Generic;
 namespace FTShirts.Web.Models
 {
-    public class Member
+    public class Member : User
     {
-        //Necessary credential to sign in to an specific account.
-        public string Username { get; set; }
-        public List<CatalogueItem> ShoppingCart { get; set; }
         //Void constructor create a dummy member
-        public Member()
-        {
-            Username = "dummy";
-            ShoppingCart = new List<CatalogueItem>();
-        }
+        public Member() : base("dummy member") { }
+        public Member(string username) : base(username) { }
 
-        //Constructor. A member can sign up with a username and their pssword
-        public Member ( string username )
+        //Override the User GetPrice so if an item have OnlyMember Offer, shows the correct price.
+        public override decimal GetPrice(CatalogueItem item)
         {
-            Username = username;
-
-            ShoppingCart = new List<CatalogueItem> ();
+            if (item.OfferType == Offer.MemberOnly) 
+            {
+                return item.MemberFinalPrice;
+            }
+            return base.GetPrice(item);
         }
     }
 }

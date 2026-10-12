@@ -10,7 +10,7 @@ namespace FTShirts.Web.Controllers
     public class HomeController : Controller
     {
         private static Catalogue _storeCatalogue = new Catalogue();
-        private static List<Member> _activeMembers = new List<Member>();
+        private static List<User> _activeUsers = new List<User>();
         public IActionResult Index()
         {
 
@@ -88,7 +88,7 @@ namespace FTShirts.Web.Controllers
             if (loginSuccess)
             {
                 Response.Cookies.Append("UserLogged", username);
-                _activeMembers.Add(new Member( username ));
+                _activeUsers.Add(new Member( username ));
 
                 return RedirectToAction("MemberIndex");
             }
@@ -179,10 +179,10 @@ namespace FTShirts.Web.Controllers
             {
                 user = "Guest"+Guid.NewGuid().ToString();
                 Response.Cookies.Append("GuestUser", user);
-                _activeMembers.Add(new Member(user));
+                _activeUsers.Add(new User(user));
             }
 
-            Member activeUser = _activeMembers.First(m => m.Username == user);
+            User activeUser = _activeUsers.First(m => m.Username == user);
 
             CatalogueItem? itemToAdd = _storeCatalogue.GetItemByID(shirtId);
             if (itemToAdd != null)
