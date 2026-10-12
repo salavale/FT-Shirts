@@ -24,5 +24,17 @@ namespace FTShirts.Web.Models
             // Team, tEAM, tEaM, tEAM must return the same team.
             return catalogue.Where(item => item.TShirt.Team.ToLower().Contains(team.ToLower()));
         }
+        public static IEnumerable<CatalogueItem> GetItemsWithTags(this IEnumerable<CatalogueItem> catalogue, IEnumerable<string> tags)
+        {
+            foreach (var tag in tags)
+            {
+                if (!string.IsNullOrWhiteSpace(tag))
+                {
+                    catalogue = catalogue.Where(item => item.Tags.Contains(tag));
+                }
+            }
+
+            return catalogue;
+        }
     }
 }

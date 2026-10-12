@@ -1,17 +1,17 @@
-1,Real Madrid,89.99,false,,,L,No,
-2,Boca Juniors,45.00,true,10,Maradona,M,Yes,20
-3,Arsenal,95.50,false,21,,M,No,
-4,Barcelona,110.00,false,9,Lewandowski,L,MemberOnly,15
-5,Manchester United,60.00,true,7,Ronaldo,XL,Yes,30
-6,Juventus,85.00,false,,,S,No,
-7,AC Milan,50.00,true,3,Maldini,L,Yes,50
-8,Bayern Munich,99.99,false,25,Muller,M,No,
-9,PSG,120.00,false,10,Mbappe,L,Yes,10
-10,Ajax,40.00,true,14,Cruyff,M,MemberOnly,25
-11,Liverpool,95.00,false,11,Salah,XL,No,
-12,Chelsea,80.00,false,,,S,Yes,15
-13,Inter Milan,55.00,true,4,Zanetti,XXL,No,
-14,Borussia Dortmund,90.00,false,11,Reus,M,MemberOnly,10
-15,Napoli,75.00,true,,,L,Yes,40
-16,Real Madrid,90.00,true,,,M,Yes,30
-17,Real Madrid,70.00,true,,,S,Yes,15
+1,Real Madrid,89.99,false,,,L,No,,retro,laLiga
+2,Boca Juniors,45.00,true,10,Maradona,M,Yes,20,season
+3,Arsenal,95.50,false,21,,M,No,,premier,retro
+4,Barcelona,110.00,false,9,Lewandowski,L,MemberOnly,15,laLiga,season
+5,Manchester United,60.00,true,7,Ronaldo,XL,Yes,30,premier,season
+6,Juventus,85.00,false,,,S,No,,serieA,season
+7,AC Milan,50.00,true,3,Maldini,L,Yes,50,serieA,retro
+8,Bayern Munich,99.99,false,25,Muller,M,No,,season
+9,PSG,120.00,false,10,Mbappe,L,Yes,10,retro
+10,Ajax,40.00,true,14,Cruyff,M,MemberOnly,25,season
+11,Liverpool,95.00,false,11,Salah,XL,No,,premier,retro
+12,Chelsea,80.00,false,,,S,Yes,15,retro,premier,season
+13,Inter Milan,55.00,true,4,Zanetti,XXL,No,,serieA,season
+14,Borussia Dortmund,90.00,false,11,Reus,M,MemberOnly,10,season
+15,Napoli,75.00,true,,,L,Yes,40,serieA,retro
+16,Real Madrid,90.00,true,,,M,Yes,30,laLiga,season
+17,Real Madrid,70.00,true,,,S,Yes,15,laLiga,retro

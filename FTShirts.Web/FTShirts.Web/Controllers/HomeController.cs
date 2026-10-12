@@ -10,8 +10,16 @@ namespace FTShirts.Web.Controllers
     public class HomeController : Controller
     {
         private static Catalogue _storeCatalogue = new Catalogue();
+        private static List<Member> _activeMembers = new List<Member>();
         public IActionResult Index()
         {
+
+            string memberLogged = Request.Cookies["UserLogged"];
+            if (!string.IsNullOrEmpty(memberLogged))
+            {
+                return RedirectToAction("MemberIndex");
+            }
+
             string filePath = "./Data/shirts.csv";
             _storeCatalogue = new Catalogue();
 
@@ -42,7 +50,7 @@ namespace FTShirts.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult SSearch( string team, bool onlyOffer)
+        public IActionResult SSearch( string team, bool onlyOffer, IEnumerable<string> tags)
         {
             var results = _storeCatalogue.GetItemsByTeam(team: team);
 
@@ -50,6 +58,8 @@ namespace FTShirts.Web.Controllers
             {
                 results = results.GetItemsOnSale();
             }
+
+            results = results.GetItemsWithTags(tags);
 
             return View("Index", results);
         }
@@ -78,11 +88,21 @@ namespace FTShirts.Web.Controllers
             if (loginSuccess)
             {
                 Response.Cookies.Append("UserLogged", username);
+                _activeMembers.Add(new Member( username ));
 
                 return RedirectToAction("MemberIndex");
             }
 
             return Content("Login Failed. Incorrect username or password.");
+        }
+
+        public IActionResult Logout()
+        {
+            Response.Cookies.Delete("UserLogged");
+
+            Response.Cookies.Delete("GuestUser");
+
+            return RedirectToAction("Index");
         }
 
         [HttpPost]
@@ -122,19 +142,63 @@ namespace FTShirts.Web.Controllers
             return View(_storeCatalogue);
         }
 
-        public IActionResult MemberSSearch(string team, bool onlyOffer)
+        public IActionResult MemberSSearch(string team, bool onlyOffer, IEnumerable<string> tags)
         {
+            string memberLogged = Request.Cookies["UserLogged"];
+            if (string.IsNullOrEmpty(memberLogged))
+            {
+                return RedirectToAction("SSearch", new { team, onlyOffer, tags });
+            }
             var results = _storeCatalogue.GetItemsByTeam(team: team);
 
             if (onlyOffer)
             {
                 results = results.GetItemsOnSaleForMembers();
             }
+            results = results.GetItemsWithTags(tags);
 
             return View("MemberIndex", results);
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        [HttpPost]
+        public IActionResult AddToCart(int shirtId)
+        {
+            string user = Request.Cookies["UserLogged"];
+            bool activeMember = false;
+            //if there is no member, we see if that user has a guest user. 
+            if (string.IsNullOrEmpty(user))
+            {
+                user = Request.Cookies["GuestUser"];
+            }
+            else
+            {
+                activeMember = true;
+            }
+            //If don't have a guest user too, we create the user a guest user
+            if (string.IsNullOrEmpty(user))
+            {
+                user = "Guest"+Guid.NewGuid().ToString();
+                Response.Cookies.Append("GuestUser", user);
+                _activeMembers.Add(new Member(user));
+            }
+
+            Member activeUser = _activeMembers.First(m => m.Username == user);
+
+            CatalogueItem? itemToAdd = _storeCatalogue.GetItemByID(shirtId);
+            if (itemToAdd != null)
+            {
+                activeUser.ShoppingCart.Add(itemToAdd.Value);
+            }
+
+            if (activeMember)
+            {
+                return View("MemberIndex");
+            }
+            return View("Index");
+        }
+
+
+            [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
