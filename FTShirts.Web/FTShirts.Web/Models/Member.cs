@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using FTShirts.Web.enums;
+using System.Collections.Generic;
 namespace FTShirts.Web.Models
 {
     public class Member : User

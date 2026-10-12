@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using FTShirts.Web.enums;
+using System.Collections.Generic;
 namespace FTShirts.Web.Models
 {
     public static class CatalogueExtensions
@@ -30,7 +31,7 @@ namespace FTShirts.Web.Models
             {
                 if (!string.IsNullOrWhiteSpace(tag))
                 {
-                    catalogue = catalogue.Where(item => item.Tags.Contains(tag));
+                    catalogue = catalogue.Where(item => item.Tags.Contains(tag  ));
                 }
             }
 
