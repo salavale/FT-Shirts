@@ -9,7 +9,10 @@ using System.Xml.Linq;
 
 namespace FTShirts.Web.Controllers
 {
-    public class CatalogueController : Controller
+    [ApiController]
+    [Route("api/catalogue")]
+    [Produces("application/json")]
+    public class CatalogueController : ControllerBase
     {
         private static Catalogue _storeCatalogue = new Catalogue();
         private const string FilePath = "./Data/shirts.csv";
@@ -18,56 +21,72 @@ namespace FTShirts.Web.Controllers
         {
             if (System.IO.File.Exists(FilePath) && !_storeCatalogue.Any())
             {
-                foreach (var line in System.IO.File.ReadLines(FilePath))
+                foreach (var line in System.IO.File.ReadLines(FilePath).Where(l => !string.IsNullOrWhiteSpace(l)))
                 {
                     _storeCatalogue.AddItem(new CatalogueItem(line));
                 }
             }
         }
-        public IActionResult Index()
+        [HttpGet]
+        public ActionResult<IEnumerable<CatalogueItem>> Index()
         {
-            return View(_storeCatalogue);
+            return Ok(_storeCatalogue);
         }
 
-        [HttpGet]
-        public IActionResult Search(string team, bool onlyOffer, IEnumerable<string> tags)
+        [HttpGet("search")]
+        public ActionResult<IEnumerable<CatalogueItem>> Search([FromQuery] string? team, [FromQuery] bool? onlyOffer, [FromQuery] IEnumerable<string>? tags)
         {
             string memberLogged = Request.Cookies["UserLogged"];
             
             var results = _storeCatalogue.GetItemsByTeam(team: team);
 
-            if (onlyOffer)
+            if (onlyOffer.HasValue)
             {
-                if (string.IsNullOrEmpty(memberLogged))
+                if (onlyOffer.Value)
                 {
-                    results = results.GetItemsOnSale();
-                }
-                else
-                {
-                    results = results.GetItemsOnSaleForMembers();
+                    if (string.IsNullOrEmpty(memberLogged))
+                    {
+                        results = results.GetItemsOnSale();
+                    }
+                    else
+                    {
+                        results = results.GetItemsOnSaleForMembers();
+                    }
                 }
             }
             results = results.GetItemsWithTags(tags);
 
-            return View("Index", results);
+            return Ok(results);
         }
-        public static CatalogueItem? FindItemById(int id)
+        internal static CatalogueItem? FindItemById(int id)
         {
             return _storeCatalogue.GetItemByID(id);
         }
 
+        [HttpGet("{id}")]
+        public ActionResult<CatalogueItem> GetById(int id)
+        {
+            var item = FindItemById(id);
+
+            if (item == null)
+            {
+                return NotFound();
+            }
+            return Ok(item);
+        }
+
         [HttpPost]
-        public IActionResult AddItem( Shirt shirt, IEnumerable<string>? tags = null) 
+        public IActionResult AddItem([FromBody] AddShirtRequest request) 
         {
             int newId = _storeCatalogue.Any() ? _storeCatalogue.Max(i => i.TShirt.Id) + 1 : 1;
-            Shirt finalShirt = shirt with { Id = newId, IsSecondHand = true };
+            Shirt finalShirt = request.Shirt with { Id = newId, IsSecondHand = true };
 
-            var newItem = new CatalogueItem(shirt: finalShirt, offerType: Offer.No, tags: tags);
+            var newItem = new CatalogueItem(shirt: finalShirt, offerType: Offer.No, tags: request.Tags);
 
             System.IO.File.AppendAllText(FilePath, newItem.ToString()+"\n");
             _storeCatalogue.AddItem(newItem);
 
-            return RedirectToAction("Index");
+            return Ok();
         }
     }
 }

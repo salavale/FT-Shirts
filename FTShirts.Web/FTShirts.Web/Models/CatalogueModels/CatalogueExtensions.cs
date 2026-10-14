@@ -27,6 +27,10 @@ namespace FTShirts.Web.Models.CatalogueModels
         }
         public static IEnumerable<CatalogueItem> GetItemsWithTags(this IEnumerable<CatalogueItem> catalogue, IEnumerable<string> tags)
         {
+            if (tags == null || !tags.Any())
+            {
+                return catalogue;
+            }
             foreach (var tag in tags)
             {
                 if (!string.IsNullOrWhiteSpace(tag))

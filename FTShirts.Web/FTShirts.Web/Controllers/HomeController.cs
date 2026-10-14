@@ -9,18 +9,15 @@ using FTShirts.Web.Models.UserModels;
 
 namespace FTShirts.Web.Controllers
 {
-    public class HomeController : Controller
+    [ApiController]
+    [Route("api")]
+    [Produces("application/json")]
+    public class HomeController : ControllerBase
     {
+        [HttpGet]
         public IActionResult Index()
         {
             return View();
-        }
-
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }
