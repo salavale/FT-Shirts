@@ -1,6 +1,7 @@
 ﻿using FTShirts.Web.enums;
 using FTShirts.Web.Models;
 using FTShirts.Web.Models.CatalogueModels;
+using FTShirts.Web.Models.CatalogueModels.CatalogueRequest;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Drawing;

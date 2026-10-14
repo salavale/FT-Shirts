@@ -2,6 +2,8 @@
 using FTShirts.Web.Models;
 using FTShirts.Web.Models.CatalogueModels;
 using FTShirts.Web.Models.UserModels;
+using FTShirts.Web.Models.UserModels.UserRequest;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Drawing;
@@ -10,75 +12,71 @@ using System.Xml.Linq;
 
 namespace FTShirts.Web.Controllers
 {
-    public class UserController : Controller
+    [ApiController]
+    [Route("api/user")]
+    [Produces("application/json")]
+    public class UserController : ControllerBase
     {
         private const string FilePath = "./Data/users.csv";
         private static List<User> _activeUsers = new List<User>();
-        public IActionResult UserLogin()
-        {
-            return View();
-        }
 
-        public IActionResult UserRegister()
-        {
-            return View();
-        }
-
-
-        [HttpPost]
-        public IActionResult Login(string username, string password)
+        [HttpPost("login")]
+        public IActionResult Login([FromBody] LogRegRequest request)
         {
             bool loginSuccess = false;
 
             if (System.IO.File.Exists(FilePath))
             {
-                string expectedLine = username + "," + password;
+                string expectedLine = request.Username + "," + request.Password;
                 loginSuccess = System.IO.File.ReadLines(FilePath).Any(line => line == expectedLine);
             }
 
             if (loginSuccess)
             {
-                Response.Cookies.Append("UserLogged", username);
-                _activeUsers.Add(new User(username));
+                Response.Cookies.Append("UserLogged", request.Username);
+                if (!_activeUsers.Any(u => u.Username == request.Username))
+                {
+                    var newUser = new User(request.Username);
+                    _activeUsers.Add(newUser);
+                }
 
-                return RedirectToAction("Index", "Catalogue");
+                return Ok();
             }
 
-            return Content("Login Failed. Incorrect username or password.");
+            return Unauthorized();
         }
 
+        [HttpDelete("logout")]
         public IActionResult Logout()
         {
             Response.Cookies.Delete("UserLogged");
 
-            Response.Cookies.Delete("GuestUser");
-
-            return RedirectToAction("Index", "Home");
+            return Ok();
         }
 
-        [HttpPost]
-        public IActionResult Register(string newUsername, string newPassword)
+        [HttpPost("register")]
+        public IActionResult Register([FromBody] LogRegRequest newRequest)
         {
             if (System.IO.File.Exists(FilePath))
             {
-                if (System.IO.File.ReadLines(FilePath).Any(line => line.StartsWith(newUsername + ",")))
+                if (System.IO.File.ReadLines(FilePath).Any(line => line.StartsWith(newRequest.Username + ",")))
                 {
-                    return Content("Login Failed. Username already taken.");
+                    return Conflict(new {message = $"Existing user with '{newRequest.Username}' username taken." });
                 }
 
             }
-            System.IO.File.AppendAllText(FilePath, newUsername + "," + newPassword + "\n");
-            return RedirectToAction("UserLogin");
+            System.IO.File.AppendAllText(FilePath, newRequest.Username + "," + newRequest.Password + "\n");
+            return Ok();
         }
 
-        [HttpPost]
+        [HttpPost("addToCart/{shirtId}")]
         public IActionResult AddToCart(int shirtId)
         { 
             string username = Request.Cookies["UserLogged"];
 
             if (string.IsNullOrEmpty(username))
             {
-                return RedirectToAction("UserLogin");
+                return Unauthorized();
             }
 
             if (!_activeUsers.Any(u => u.Username == username))
@@ -94,33 +92,23 @@ namespace FTShirts.Web.Controllers
                 activeUser.ShoppingCart.Add(itemToAdd.Value);
             }
 
-            return RedirectToAction("Index", "Catalogue");
+            return Ok();
         }
 
-        [HttpGet]
-        public IActionResult ShoppingCart()
+        [HttpGet("shoppingCart")]
+        public ActionResult<User> ShoppingCart()
         {
-            string user = Request.Cookies["UserLogged"] ?? Request.Cookies["GuestUser"];
+            string user = Request.Cookies["UserLogged"];
 
             if (string.IsNullOrEmpty(user) || !_activeUsers.Any(u => u.Username == user))
             {
-                return View(new User());
+                return Ok(new User());
             }
 
             User activeUser = _activeUsers.First(u => u.Username == user);
 
-            return View(activeUser);
+            return Ok(activeUser);
             
-        }
-
-        public IActionResult SellShirt()
-        {
-            if (string.IsNullOrEmpty(Request.Cookies["UserLogged"]))
-            {
-                return RedirectToAction("UserLogin");
-            }
-
-            return View();
         }
     }
 }
