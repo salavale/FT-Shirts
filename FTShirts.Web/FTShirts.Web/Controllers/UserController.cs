@@ -112,5 +112,15 @@ namespace FTShirts.Web.Controllers
             return View(activeUser);
             
         }
+
+        public IActionResult SellShirt()
+        {
+            if (string.IsNullOrEmpty(Request.Cookies["UserLogged"]))
+            {
+                return RedirectToAction("UserPage");
+            }
+
+            return View();
+        }
     }
 }

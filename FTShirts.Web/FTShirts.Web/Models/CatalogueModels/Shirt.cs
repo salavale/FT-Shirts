@@ -1,4 +1,5 @@
 ﻿using FTShirts.Web.enums;
+using System.Globalization;
 namespace FTShirts.Web.Models.CatalogueModels
 {
 
@@ -7,7 +8,7 @@ namespace FTShirts.Web.Models.CatalogueModels
     {
         public override string ToString()
         {
-            return $"{Id},{Team},{Price},{IsSecondHand},{PNumber},{PName},{Size}";
+            return $"{Id},{Team},{Price.ToString(CultureInfo.InvariantCulture)},{IsSecondHand},{PNumber},{PName},{Size}";
         }
     }
 }

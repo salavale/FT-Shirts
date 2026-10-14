@@ -20,11 +20,14 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Catalogue" asp-action="Index">Home</a>
+                        </li>
                         @if (!string.IsNullOrEmpty(Context.Request.Cookies["UserLogged"]))
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Catalogue" asp-action="Index">Home</a>
-                            </li>
+                            <a href="/User/SellShirt" class="btn btn-warning me-2 fw-bold">
+                                Sell Shirt 👕
+                            </a>
                             <li class="nav-item">
                                 <a class="btn btn-outline-danger" href="/User/Logout">Logout</a>
                             </li>
@@ -32,10 +35,7 @@
                         else
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Catalogue" asp-action="Index">Home</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="MemberPage">Login/Register</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="UserPage">Login/Register</a>
                             </li>
                         }
                         <li class="nav-item ms-3">

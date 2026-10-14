@@ -57,9 +57,13 @@ namespace FTShirts.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddItem( Shirt shirt, Offer offerType, int? discount = null, IEnumerable<string>? tags = null) 
+        public IActionResult AddItem( Shirt shirt, IEnumerable<string>? tags = null) 
         {
-            var newItem = new CatalogueItem(shirt, offerType, discount, tags);
+            int newId = _storeCatalogue.Any() ? _storeCatalogue.Max(i => i.TShirt.Id) + 1 : 1;
+            Shirt finalShirt = shirt with { Id = newId, IsSecondHand = true };
+
+            var newItem = new CatalogueItem(shirt: finalShirt, offerType: Offer.No, tags: tags);
+
             System.IO.File.AppendAllText(FilePath, newItem.ToString()+"\n");
             _storeCatalogue.AddItem(newItem);
 
