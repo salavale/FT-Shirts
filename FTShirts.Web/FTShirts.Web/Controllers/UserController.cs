@@ -14,7 +14,7 @@ namespace FTShirts.Web.Controllers
     {
         private const string FilePath = "./Data/users.csv";
         private static List<User> _activeUsers = new List<User>();
-        public IActionResult UserPage()
+        public IActionResult UserLogin()
         {
             return View();
         }
@@ -68,7 +68,7 @@ namespace FTShirts.Web.Controllers
 
             }
             System.IO.File.AppendAllText(FilePath, newUsername + "," + newPassword + "\n");
-            return RedirectToAction("UserPage");
+            return RedirectToAction("UserLogin");
         }
 
         [HttpPost]
@@ -78,7 +78,7 @@ namespace FTShirts.Web.Controllers
 
             if (string.IsNullOrEmpty(username))
             {
-                return RedirectToAction("UserPage");
+                return RedirectToAction("UserLogin");
             }
 
             if (!_activeUsers.Any(u => u.Username == username))
@@ -117,7 +117,7 @@ namespace FTShirts.Web.Controllers
         {
             if (string.IsNullOrEmpty(Request.Cookies["UserLogged"]))
             {
-                return RedirectToAction("UserPage");
+                return RedirectToAction("UserLogin");
             }
 
             return View();
