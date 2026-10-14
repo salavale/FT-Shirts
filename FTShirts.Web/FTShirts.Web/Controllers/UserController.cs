@@ -1,4 +1,5 @@
-﻿using FTShirts.Web.Models;
+﻿using FTShirts.Web.Controllers;
+using FTShirts.Web.Models;
 using FTShirts.Web.Models.CatalogueModels;
 using FTShirts.Web.Models.UserModels;
 using Microsoft.AspNetCore.Mvc;
@@ -11,13 +12,14 @@ namespace FTShirts.Web.Controllers
 {
     public class UserController : Controller
     {
+        private const string FilePath = "./Data/users.csv";
         private static List<User> _activeUsers = new List<User>();
-        public IActionResult MemberPage()
+        public IActionResult UserPage()
         {
             return View();
         }
 
-        public IActionResult MemberRegister()
+        public IActionResult UserRegister()
         {
             return View();
         }
@@ -26,19 +28,18 @@ namespace FTShirts.Web.Controllers
         [HttpPost]
         public IActionResult Login(string username, string password)
         {
-            string filePath = "./Data/members.csv";
             bool loginSuccess = false;
 
-            if (System.IO.File.Exists(filePath))
+            if (System.IO.File.Exists(FilePath))
             {
                 string expectedLine = username + "," + password;
-                loginSuccess = System.IO.File.ReadLines(filePath).Any(line => line == expectedLine);
+                loginSuccess = System.IO.File.ReadLines(FilePath).Any(line => line == expectedLine);
             }
 
             if (loginSuccess)
             {
                 Response.Cookies.Append("UserLogged", username);
-                _activeUsers.Add(new Member(username));
+                _activeUsers.Add(new User(username));
 
                 return RedirectToAction("Index", "Catalogue");
             }
@@ -58,53 +59,34 @@ namespace FTShirts.Web.Controllers
         [HttpPost]
         public IActionResult Register(string newUsername, string newPassword)
         {
-            string filePath = "./Data/members.csv";
-            if (System.IO.File.Exists(filePath))
+            if (System.IO.File.Exists(FilePath))
             {
-                if (System.IO.File.ReadLines(filePath).Any(line => line.StartsWith(newUsername + ",")))
+                if (System.IO.File.ReadLines(FilePath).Any(line => line.StartsWith(newUsername + ",")))
                 {
                     return Content("Login Failed. Username already taken.");
                 }
 
             }
-            System.IO.File.AppendAllText(filePath, newUsername + "," + newPassword + "\n");
-            return RedirectToAction("MemberPage");
+            System.IO.File.AppendAllText(FilePath, newUsername + "," + newPassword + "\n");
+            return RedirectToAction("UserPage");
         }
 
         [HttpPost]
         public IActionResult AddToCart(int shirtId)
-        {
-            string user = Request.Cookies["UserLogged"];
-            bool activeMember = false;
+        { 
+            string username = Request.Cookies["UserLogged"];
 
-            if (string.IsNullOrEmpty(user))
+            if (string.IsNullOrEmpty(username))
             {
-                user = Request.Cookies["GuestUser"];
-            }
-            else
-            {
-                activeMember = true;
+                return RedirectToAction("UserPage");
             }
 
-            if (string.IsNullOrEmpty(user))
+            if (!_activeUsers.Any(u => u.Username == username))
             {
-                user = "Guest" + Guid.NewGuid().ToString();
-                Response.Cookies.Append("GuestUser", user);
-                _activeUsers.Add(new User(user));
-            }
-            else if (!_activeUsers.Any(u => u.Username == user))
-            {
-                if (activeMember)
-                {
-                    _activeUsers.Add(new Member(user));
-                }
-                else
-                {
-                    _activeUsers.Add(new User(user));
-                }
+                _activeUsers.Add(new User(username));
             }
 
-            User activeUser = _activeUsers.First(m => m.Username == user);
+            User activeUser = _activeUsers.First(m => m.Username == username);
             CatalogueItem? itemToAdd = CatalogueController.FindItemById(shirtId);
 
             if (itemToAdd != null)

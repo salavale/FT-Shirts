@@ -86,85 +86,42 @@
                 <th></th> <!-- In this column we will have the add to shopping cart button-->
             </tr>
         </thead>
-        <tbody>
-                @if (!string.IsNullOrEmpty(Context.Request.Cookies["UserLogged"]))
+       <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.TShirt.Id</td>
+            <td>@item.TShirt.Team</td>
+            <td>@item.TShirt.Size</td>
+            <td>@(item.TShirt.IsSecondHand ? "Yes" : "No")</td>
+            <td>
+                @if (item.OfferType != Offer.No)
                 {
-                    @foreach (var item in Model)
-                    {
-                        <tr>
-                            <td>@item.TShirt.Id</td>
-                            <td>@item.TShirt.Team</td>
-                            <td>@item.TShirt.Size</td>
-                            <td>@(item.TShirt.IsSecondHand ? "Yes" : "No")</td>
-                            <td>
-                                @if (item.OfferType == Offer.Yes)
-                                {
-                                    <del>@item.TShirt.Price.ToString("0.00") €</del>
-                                }
-                                else
-                                {
-                                    <span>@item.TShirt.Price.ToString("0.00") €</span>
-                                }
-                            </td>
-
-                            <td>@item.OfferType</td>
-
-                            <td>@(item.OfferDiscount.HasValue ? item.OfferDiscount.Value + "%" : "-")</td>
-
-                            <td style="font-weight: bold; color: green;">
-                                @item.FinalPrice.ToString("0.00") €
-                            </td>
-                            <td class="text-center" style="width: 120px;">
-                                <form action="/User/AddToCart" method="post" class="m-0">
-                                    <input type="hidden" name="shirtId" value="@item.TShirt.Id" />
-
-                                    <button type="submit" class="btn btn-success btn-sm w-100 fw-bold">
-                                        🛒 Add
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                    }
+                    <del>@item.TShirt.Price.ToString("0.00") €</del>
                 }
                 else
                 {
-                    @foreach (var item in Model)
-            {
-                <tr>
-                    <td>@item.TShirt.Id</td>
-                    <td>@item.TShirt.Team</td>
-                    <td>@item.TShirt.Size</td>
-                    <td>@(item.TShirt.IsSecondHand ? "Yes" : "No")</td>
-                    <td>
-                        @if (item.OfferType == Offer.Yes || item.OfferType == Offer.MemberOnly)
-                        {
-                            <del>@item.TShirt.Price.ToString("0.00") €</del>
-                        }
-                        else
-                        {
-                            <span>@item.TShirt.Price.ToString("0.00") €</span>
-                        }
-                    </td>
-
-                    <td>@item.OfferType</td>
-
-                    <td>@(item.OfferDiscount.HasValue ? item.OfferDiscount.Value + "%" : "-")</td>
-
-                    <td style="font-weight: bold; color: green;">
-                        @item.MemberFinalPrice.ToString("0.00") €
-                    </td>
-                    <td>
-                            <form action="/User/AddToCart" method="post" class="m-0">
-                                <input type="hidden" name="shirtId" value="@item.TShirt.Id" />
-
-                                <button type="submit" class="btn btn-success btn-sm w-100 fw-bold">
-                                    🛒 Add
-                                </button>
-                            </form>
-                    </td>
-                </tr>
-            }
+                    <span>@item.TShirt.Price.ToString("0.00") €</span>
                 }
-            </tbody>
+            </td>
+            <td>@item.OfferType</td>
+            <td>@(item.OfferDiscount.HasValue ? item.OfferDiscount.Value + "%" : "-")</td>
+            <td style="font-weight: bold; color: green;">
+                @item.FinalPrice.ToString("0.00") €
+            </td>
+            <td class="text-center" style="width: 120px;">
+                @if (!string.IsNullOrEmpty(Context.Request.Cookies["UserLogged"]))
+                {
+                    <form action="/User/AddToCart" method="post" class="m-0">
+                        <input type="hidden" name="shirtId" value="@item.TShirt.Id" />
+                        <button type="submit" class="btn btn-success btn-sm w-100 fw-bold">
+                            🛒 Add
+                        </button>
+                    </form>
+                }
+            </td>
+        </tr>
+    }
+</tbody>
     </table>
 </div>

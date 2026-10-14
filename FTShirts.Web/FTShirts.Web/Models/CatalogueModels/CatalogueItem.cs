@@ -9,37 +9,20 @@ namespace FTShirts.Web.Models.CatalogueModels
         public Offer OfferType { get; set; }
         public int? OfferDiscount { get; set; }
         public List<string> Tags { get; }
-        public decimal FinalPrice
-        {
-            get
-            {
-                if (OfferType == Offer.Yes)
-                {
-                    decimal discountMultiplier = 1m - (OfferDiscount.Value / 100m);
-                    return TShirt.Price * discountMultiplier;
-                }
-                return TShirt.Price;
-            }
-        }
-        public decimal MemberFinalPrice
-        {
-            get
-            {
-                if (OfferType == Offer.MemberOnly || OfferType == Offer.Yes)
-                {
-                    decimal discountMultiplier = 1m - (OfferDiscount.Value / 100m);
-                    return TShirt.Price * discountMultiplier;
-                }
-                return TShirt.Price;
-            }
-        }
         //constructor
-        public CatalogueItem(Shirt shirt, Offer offerType, int? discount = null)
+        public CatalogueItem(Shirt shirt, Offer offerType, int? discount = null, IEnumerable<string>? tags = null)
         {
             TShirt = shirt;
             OfferType = offerType;
             OfferDiscount = discount;
             Tags = new List<string>();
+            if(tags != null)
+            {
+                foreach (string tag in tags)
+                {
+                    Tags.Add(tag);
+                }
+            }
         }
         //Constructor to read from a csv file the data of a ItemCatalogue.
         //The format must be:
@@ -70,6 +53,40 @@ namespace FTShirts.Web.Models.CatalogueModels
                 }
 
             }
+        }
+        public decimal FinalPrice
+        {
+            get
+            {
+                if (OfferType == Offer.Yes)
+                {
+                    decimal discountMultiplier = 1m - (OfferDiscount.Value / 100m);
+                    return TShirt.Price * discountMultiplier;
+                }
+                return TShirt.Price;
+            }
+        }
+        public decimal MemberFinalPrice
+        {
+            get
+            {
+                if (OfferType == Offer.MemberOnly || OfferType == Offer.Yes)
+                {
+                    decimal discountMultiplier = 1m - (OfferDiscount.Value / 100m);
+                    return TShirt.Price * discountMultiplier;
+                }
+                return TShirt.Price;
+            }
+        }
+
+        public void AddTag( string tag)
+        {
+            Tags.Add(tag);
+        }
+
+        public override string ToString()
+        {
+            return $"{TShirt.ToString()},{OfferType},{OfferDiscount},{string.Join(",", Tags)}";
         }
     }
 }
