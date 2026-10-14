@@ -10,9 +10,17 @@
         <a href="/Catalogue/Index" class="btn btn-primary btn-lg px-4">
             Browse Catalogue
         </a>
-        
-        <a href="/User/MemberPage" class="btn btn-outline-dark btn-lg px-4">
-            Sign In / Register
-        </a>
+        @if (!string.IsNullOrEmpty(Context.Request.Cookies["UserLogged"]))
+        {
+             <a href="/User/SellShirt" class="btn btn-warning me-2 fw-bold">
+                Sell Shirt 👕
+            </a>    
+        }
+        else
+        {
+            <a href="/User/UserPage" class="btn btn-outline-dark btn-lg px-4">
+                Sign In / Register
+             </a>   
+        }
     </div>
 </div>

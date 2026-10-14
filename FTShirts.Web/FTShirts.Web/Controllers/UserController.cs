@@ -53,7 +53,7 @@ namespace FTShirts.Web.Controllers
 
             Response.Cookies.Delete("GuestUser");
 
-            return RedirectToAction("Index", "Catalogue");
+            return RedirectToAction("Index", "Home");
         }
 
         [HttpPost]
