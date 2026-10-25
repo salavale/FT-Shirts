@@ -1,0 +1,37 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Register - FT-Shirts</title>
+    <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/css/site.css" />
+</head>
+<body>
+    <div id="header-placeholder"></div>
+
+    <main class="container mb-5 d-flex justify-content-center">
+        <div class="card p-3 mt-4 w-100" style="max-width: 400px;">
+            <h3>User Register</h3>
+            <form id="registerForm">
+                <div class="mb-2">
+                    <label>Username:</label>
+                    <input type="text" id="newUsername" name="newUsername" class="form-control" required />
+                </div>
+                <div class="mb-2">
+                    <label>Password:</label>
+                    <input type="password" id="newPassword" name="newPassword" class="form-control" required />
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Register</button>
+            </form>
+            <div class="mt-3 mb-4" style="display: flex; gap: 10px;">
+                <a href="/user/UserLogin.html" id="btnGoToLogin" class="btn btn-secondary w-100">I already have an account</a>
+            </div>
+        </div>
+    </main>
+
+    <script src="/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/site.js"></script>
+    <script src="/js/register.js"></script>
+</body>
+</html>
