@@ -1,0 +1,102 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Catalogue - FT-Shirts</title>
+    <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/css/site.css" />
+</head>
+<body>
+    <div id="header-placeholder"></div>
+    
+    <main class="container mb-5">
+        <div class="text-center">
+            <h1 class="display-4">Welcome to FT-Shirts</h1>
+            <p>Shop for new and second-handed sport t-shirts .</p>
+        </div>
+        <div class="container mt-4">
+            <h2>Available</h2>
+        
+            <div class="mb-4" style="display: flex; gap: 10px;">
+                <button id="btnViewAll" class="btn btn-secondary">View whole catalogue</button>
+            </div>
+        
+            <form id="searchForm" class="d-flex flex-column align-items-end" style="margin-left: auto; max-width: 500px;">
+                <div class="d-flex align-items-center mb-3 w-100 justify-content-end">
+                    <input type="text" id="teamInput" name="team" class="form-control me-3" placeholder="Teams ..." style="width: auto;" />
+        
+                    <div class="form-check me-3 mb-0 d-flex align-items-center">
+                        <input class="form-check-input me-1" type="checkbox" name="onlyOffer" value="true" id="checkOfertas">
+                        <label class="form-check-label text-nowrap fw-bold" for="checkOfertas" style="color: black;">
+                            On Sale
+                        </label>
+                    </div>
+        
+                    <button type="submit" class="btn btn-info px-4">Submit</button>
+                </div>
+        
+                <div class="w-100 text-start">
+                    <button class="btn btn-link text-dark fw-bold p-0 text-decoration-none mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTags" aria-expanded="false" aria-controls="collapseTags">
+                        Tags <span style="font-size: 0.8em;">&#11163;</span>
+                    </button>
+        
+                    <div class="collapse" id="collapseTags">
+                        <div class="card card-body p-3 shadow-sm mt-1">
+                            <div class="d-flex flex-wrap gap-4">
+                                <div class="d-flex flex-column gap-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="tags" value="retro" id="tagRetro">
+                                        <label class="form-check-label fw-bold" for="tagRetro">retro</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="tags" value="season" id="tagSeason">
+                                        <label class="form-check-label fw-bold" for="tagSeason">26/27 season</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="tags" value="serieA" id="tagSerieA">
+                                        <label class="form-check-label fw-bold" for="tagSerieA">Serie A</label>
+                                    </div>
+                                </div>
+        
+                                <div class="d-flex flex-column gap-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="tags" value="laLiga" id="tagLiga">
+                                        <label class="form-check-label fw-bold" for="tagLiga">La Liga</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="tags" value="premier" id="tagPremier">
+                                        <label class="form-check-label fw-bold" for="tagPremier">Premier</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Team</th>
+                        <th>Size</th>
+                        <th>Second-handed</th>
+                        <th>Original Price</th>
+                        <th>Offer</th>
+                        <th>Discount</th>
+                        <th>Final Price</th>
+                        <th></th> <!-- In this column we will have the add to shopping cart button-->
+                    </tr>
+                </thead>
+                <tbody id="catalogueTableBody">
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script src="/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/site.js"></script>
+    <script src="/js/catalogue.js"></script>
+</body>
+</html>
