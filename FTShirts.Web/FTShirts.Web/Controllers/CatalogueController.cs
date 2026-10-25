@@ -2,12 +2,12 @@
 using FTShirts.Web.Models;
 using FTShirts.Web.Models.CatalogueModels;
 using FTShirts.Web.Models.CatalogueModels.CatalogueRequest;
+using FTShirts.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Xml.Linq;
-
 namespace FTShirts.Web.Controllers
 {
     [ApiController]
@@ -15,59 +15,34 @@ namespace FTShirts.Web.Controllers
     [Produces("application/json")]
     public class CatalogueController : ControllerBase
     {
-        private static Catalogue _storeCatalogue = new Catalogue();
-        private const string FilePath = "./Data/shirts.csv";
-        //We load the whole catalogue at once.
-        public CatalogueController()
+        private ICatalogueService _catalogueService;
+        public CatalogueController(ICatalogueService catalogueService)
         {
-            if (System.IO.File.Exists(FilePath) && !_storeCatalogue.Any())
-            {
-                foreach (var line in System.IO.File.ReadLines(FilePath).Where(l => !string.IsNullOrWhiteSpace(l)))
-                {
-                    _storeCatalogue.AddItem(new CatalogueItem(line));
-                }
-            }
+            _catalogueService = catalogueService;
         }
+
         [HttpGet]
         public ActionResult<IEnumerable<CatalogueItem>> Index()
         {
-            return Ok(_storeCatalogue);
+            return Ok(_catalogueService.GetAllItems());
         }
 
         [HttpGet("search")]
         public ActionResult<IEnumerable<CatalogueItem>> Search([FromQuery] string? team, [FromQuery] bool? onlyOffer, [FromQuery] IEnumerable<string>? tags)
         {
-            string memberLogged = Request.Cookies["UserLogged"];
-            
-            var results = _storeCatalogue.GetItemsByTeam(team: team);
-
-            if (onlyOffer.HasValue)
+            bool memberLogged = true;
+            if (string.IsNullOrEmpty(Request.Cookies["UserLogged"]))
             {
-                if (onlyOffer.Value)
-                {
-                    if (string.IsNullOrEmpty(memberLogged))
-                    {
-                        results = results.GetItemsOnSale();
-                    }
-                    else
-                    {
-                        results = results.GetItemsOnSaleForMembers();
-                    }
-                }
+                memberLogged = false;
             }
-            results = results.GetItemsWithTags(tags);
 
-            return Ok(results);
-        }
-        internal static CatalogueItem? FindItemById(int id)
-        {
-            return _storeCatalogue.GetItemByID(id);
+            return Ok(_catalogueService.SearchItems(team, onlyOffer, tags, memberLogged));
         }
 
         [HttpGet("{id}")]
         public ActionResult<CatalogueItem> GetById(int id)
         {
-            var item = FindItemById(id);
+            var item = _catalogueService.GetItemById(id);
 
             if (item == null)
             {
@@ -77,17 +52,11 @@ namespace FTShirts.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddItem([FromBody] AddShirtRequest request) 
+        public IActionResult AddItem([FromBody] AddShirtRequest request)
         {
-            int newId = _storeCatalogue.Any() ? _storeCatalogue.Max(i => i.TShirt.Id) + 1 : 1;
-            Shirt finalShirt = request.Shirt with { Id = newId, IsSecondHand = true };
-
-            var newItem = new CatalogueItem(shirt: finalShirt, offerType: Offer.No, tags: request.Tags);
-
-            System.IO.File.AppendAllText(FilePath, newItem.ToString()+"\n");
-            _storeCatalogue.AddItem(newItem);
-
+            _catalogueService.AddItem(request);
             return Ok();
         }
     }
 }
+
