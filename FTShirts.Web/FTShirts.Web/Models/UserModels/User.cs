@@ -1,4 +1,5 @@
-﻿using FTShirts.Web.Models.CatalogueModels;
+﻿using FTShirts.Web.Models.CartModels;
+using FTShirts.Web.Models.CatalogueModels;
 using System.Collections.Generic;
 namespace FTShirts.Web.Models.UserModels
 {
@@ -6,12 +7,12 @@ namespace FTShirts.Web.Models.UserModels
     {
         //Necessary credential to sign in to an specific account.
         public string Username { get; set; }
-        public List<CatalogueItem> ShoppingCart { get; set; }
+        public SCart ShoppingCart { get; set; }
         //Void constructor create a dummy member
         public User()
         {
             Username = "dummy";
-            ShoppingCart = new List<CatalogueItem>();
+            ShoppingCart = new SCart();
         }
 
         //Constructor. A member can sign up with a username and their pssword
@@ -19,7 +20,7 @@ namespace FTShirts.Web.Models.UserModels
         {
             Username = username;
 
-            ShoppingCart = new List<CatalogueItem>();
+            ShoppingCart = new SCart();
         }
 
         public virtual decimal GetPrice(CatalogueItem item)

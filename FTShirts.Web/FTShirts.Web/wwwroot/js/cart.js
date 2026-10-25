@@ -5,7 +5,7 @@
 });
 
 function loadShoppingCart() {
-    fetch('/api/user/shoppingCart')
+    fetch('/api/cart')
         .then(response => {
             if (!response.ok) throw new Error("Error loading shopping cart.");
             return response.json();
@@ -16,7 +16,7 @@ function loadShoppingCart() {
             const cartContent = document.getElementById("cartContent");
             const cartTotal = document.getElementById("cartTotal");
 
-            const items = user.shoppingCart || [];
+            const items = user.shoppingCart.items || [];
 
             if (items.length === 0) {
                 if (emptyCartMessage) emptyCartMessage.style.display = "block";

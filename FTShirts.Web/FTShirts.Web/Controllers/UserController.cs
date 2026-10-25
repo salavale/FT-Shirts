@@ -18,7 +18,7 @@ namespace FTShirts.Web.Controllers
     public class UserController : ControllerBase
     {
         private const string FilePath = "./Data/users.csv";
-        private static List<User> _activeUsers = new List<User>();
+        internal static List<User> ActiveUsers = new List<User>();
 
         [HttpPost("login")]
         public IActionResult Login([FromBody] LogRegRequest request)
@@ -34,10 +34,10 @@ namespace FTShirts.Web.Controllers
             if (loginSuccess)
             {
                 Response.Cookies.Append("UserLogged", request.Username);
-                if (!_activeUsers.Any(u => u.Username == request.Username))
+                if (!ActiveUsers.Any(u => u.Username == request.Username))
                 {
                     var newUser = new User(request.Username);
-                    _activeUsers.Add(newUser);
+                    ActiveUsers.Add(newUser);
                 }
 
                 return Ok();
@@ -61,54 +61,12 @@ namespace FTShirts.Web.Controllers
             {
                 if (System.IO.File.ReadLines(FilePath).Any(line => line.StartsWith(newRequest.Username + ",")))
                 {
-                    return Conflict(new {message = $"Existing user with '{newRequest.Username}' username taken." });
+                    return Conflict(new { message = $"Existing user with '{newRequest.Username}' username taken." });
                 }
 
             }
             System.IO.File.AppendAllText(FilePath, newRequest.Username + "," + newRequest.Password + "\n");
             return Ok();
-        }
-
-        [HttpPost("addToCart/{shirtId}")]
-        public IActionResult AddToCart(int shirtId)
-        { 
-            string username = Request.Cookies["UserLogged"];
-
-            if (string.IsNullOrEmpty(username))
-            {
-                return Unauthorized();
-            }
-
-            if (!_activeUsers.Any(u => u.Username == username))
-            {
-                _activeUsers.Add(new User(username));
-            }
-
-            User activeUser = _activeUsers.First(m => m.Username == username);
-            CatalogueItem? itemToAdd = CatalogueController.FindItemById(shirtId);
-
-            if (itemToAdd != null)
-            {
-                activeUser.ShoppingCart.Add(itemToAdd.Value);
-            }
-
-            return Ok();
-        }
-
-        [HttpGet("shoppingCart")]
-        public ActionResult<User> ShoppingCart()
-        {
-            string user = Request.Cookies["UserLogged"];
-
-            if (string.IsNullOrEmpty(user) || !_activeUsers.Any(u => u.Username == user))
-            {
-                return Ok(new User());
-            }
-
-            User activeUser = _activeUsers.First(u => u.Username == user);
-
-            return Ok(activeUser);
-            
         }
     }
 }

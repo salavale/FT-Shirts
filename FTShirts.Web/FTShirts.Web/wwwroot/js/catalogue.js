@@ -102,7 +102,7 @@ function loadCatalogue(url) {
 function addToCart(event, shirtId) {
     event.preventDefault();
 
-    fetch(`/api/user/addToCart/${shirtId}`, {
+    fetch(`/api/cart/add/${shirtId}`, {
         method: 'POST'
     })
         .then(response => {

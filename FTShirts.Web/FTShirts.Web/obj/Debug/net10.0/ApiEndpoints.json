@@ -1,5 +1,39 @@
 [
   {
+    "ContainingType": "FTShirts.Web.Controllers.CartController",
+    "Method": "GetCart",
+    "RelativePath": "api/cart",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "FTShirts.Web.Models.UserModels.User",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "FTShirts.Web.Controllers.CartController",
+    "Method": "AddToCart",
+    "RelativePath": "api/cart/add/{shirtId}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "shirtId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "FTShirts.Web.Controllers.CatalogueController",
     "Method": "Index",
     "RelativePath": "api/catalogue",
@@ -93,22 +127,6 @@
   },
   {
     "ContainingType": "FTShirts.Web.Controllers.UserController",
-    "Method": "AddToCart",
-    "RelativePath": "api/user/addToCart/{shirtId}",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "shirtId",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "FTShirts.Web.Controllers.UserController",
     "Method": "Login",
     "RelativePath": "api/user/login",
     "HttpMethod": "POST",
@@ -148,23 +166,5 @@
       }
     ],
     "ReturnTypes": []
-  },
-  {
-    "ContainingType": "FTShirts.Web.Controllers.UserController",
-    "Method": "ShoppingCart",
-    "RelativePath": "api/user/shoppingCart",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": [
-      {
-        "Type": "FTShirts.Web.Models.UserModels.User",
-        "MediaTypes": [
-          "application/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
   }
 ]
