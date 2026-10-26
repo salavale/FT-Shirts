@@ -34,7 +34,6 @@ namespace FTShirts.Web.Controllers
                 _userService.EnsureUserActive(request.Username);
                 return Ok();
             }
-
             return Unauthorized();
         }
 
