@@ -3,6 +3,7 @@
     const headerPlaceholder = document.getElementById("header-placeholder");
 
     if (headerPlaceholder) {
+        // Se mantiene como ruta relativa ya que header.html ahora reside localmente en el Front-End
         fetch('/header.html')
             .then(response => {
                 if (!response.ok) throw new Error("No se pudo cargar la cabecera.");
@@ -18,6 +19,7 @@
         updateIUser();
     }
 });
+
 function getCookie(name) {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);

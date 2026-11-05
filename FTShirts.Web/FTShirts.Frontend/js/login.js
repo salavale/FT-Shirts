@@ -1,4 +1,6 @@
-﻿document.addEventListener("DOMContentLoaded", () => {
+﻿const API_URL = 'https://localhost:5000';
+
+document.addEventListener("DOMContentLoaded", () => {
     const loginForm = document.getElementById("loginForm");
 
     if (loginForm) {
@@ -13,7 +15,7 @@
                 password: password
             };
 
-            fetch('/api/user/login', {
+            fetch(`${API_URL}/api/user/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -24,7 +26,6 @@
                     if (response.ok) {
                         window.location.href = "/catalogue/Index.html";
                     } else if (response.status === 401) {
-
                     } else {
                         throw new Error("Login failed.");
                     }

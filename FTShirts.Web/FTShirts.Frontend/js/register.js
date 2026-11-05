@@ -1,4 +1,6 @@
-﻿document.addEventListener("DOMContentLoaded", () => {
+﻿const API_URL = 'https://localhost:5000';
+
+document.addEventListener("DOMContentLoaded", () => {
     const registerForm = document.getElementById("registerForm");
 
     if (registerForm) {
@@ -13,7 +15,7 @@
                 password: password
             };
 
-            fetch('/api/user/register', {
+            fetch(`${API_URL}/api/user/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
