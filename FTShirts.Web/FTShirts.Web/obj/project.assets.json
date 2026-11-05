@@ -14,11 +14,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\jsala\\source\\repos\\FT-Shirts\\FTShirts.Web\\FTShirts.Web\\FTShirts.Web.csproj",
+      "projectUniqueName": "C:\\Users\\jsala\\source\\proyecto\\FTShirts.Web\\FTShirts.Web\\FTShirts.Web.csproj",
       "projectName": "FTShirts.Web",
-      "projectPath": "C:\\Users\\jsala\\source\\repos\\FT-Shirts\\FTShirts.Web\\FTShirts.Web\\FTShirts.Web.csproj",
+      "projectPath": "C:\\Users\\jsala\\source\\proyecto\\FTShirts.Web\\FTShirts.Web\\FTShirts.Web.csproj",
       "packagesPath": "C:\\Users\\jsala\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\jsala\\source\\repos\\FT-Shirts\\FTShirts.Web\\FTShirts.Web\\obj\\",
+      "outputPath": "C:\\Users\\jsala\\source\\proyecto\\FTShirts.Web\\FTShirts.Web\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
