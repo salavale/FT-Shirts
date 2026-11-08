@@ -1,4 +1,4 @@
-﻿const API_URL = 'https://localhost:5000';
+﻿const API_URL = 'http://127.0.0.1:5000';
 
 document.addEventListener("DOMContentLoaded", () => {
     if (document.getElementById("catalogueTableBody")) {
@@ -105,10 +105,12 @@ function addToCart(event, shirtId) {
     event.preventDefault();
 
     fetch(`${API_URL}/api/cart/add/${shirtId}`, {
-        method: 'POST'
+        method: 'POST',
+        credentials: 'include' 
     })
         .then(response => {
             if (response.ok) {
+                alert("Shirt added to cart successfully!"); 
             } else if (response.status === 401) {
                 window.location.href = "/user/UserLogin.html";
             } else {

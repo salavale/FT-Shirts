@@ -1,4 +1,4 @@
-﻿const API_URL = 'https://localhost:5000';
+﻿const API_URL = 'http://127.0.0.1:5000';
 
 document.addEventListener("DOMContentLoaded", () => {
     const sellShirtForm = document.getElementById("sellShirtForm");
@@ -33,6 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 headers: {
                     'Content-Type': 'application/json'
                 },
+                credentials: 'include',
                 body: JSON.stringify(requestBody)
             })
                 .then(response => {

@@ -1,5 +1,4 @@
-﻿const API_URL = 'https://localhost:5000';
-
+﻿const API_URL = 'http://127.0.0.1:5000';
 document.addEventListener("DOMContentLoaded", () => {
     const loginForm = document.getElementById("loginForm");
 
@@ -20,6 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 headers: {
                     'Content-Type': 'application/json'
                 },
+                credentials: 'include',
                 body: JSON.stringify(requestBody)
             })
                 .then(response => {
@@ -32,7 +32,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 })
                 .catch(error => {
                     console.error("Error:", error);
-                    alert("An error occurred during login.");
                 });
         });
     }

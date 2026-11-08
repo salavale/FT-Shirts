@@ -1,4 +1,4 @@
-﻿const API_URL = 'https://localhost:5000';
+﻿const API_URL = 'http://127.0.0.1:5000';
 
 document.addEventListener("DOMContentLoaded", () => {
     const registerForm = document.getElementById("registerForm");
@@ -20,12 +20,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 headers: {
                     'Content-Type': 'application/json'
                 },
+                credentials: 'include', 
                 body: JSON.stringify(requestBody)
             })
                 .then(response => {
                     if (response.ok) {
                         window.location.href = "/user/UserLogin.html";
                     } else if (response.status === 409) {
+                        alert("Username already exists. Please choose another one.");
                     } else {
                         throw new Error("Registration failed.");
                     }
