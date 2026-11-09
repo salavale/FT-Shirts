@@ -30,7 +30,15 @@ namespace FTShirts.Web.Controllers
 
             if (loginSuccess)
             {
-                Response.Cookies.Append("UserLogged", request.Username);
+                var cookieOptions = new CookieOptions
+                {
+                    HttpOnly = false,
+                    Secure = false,
+                    SameSite = SameSiteMode.Lax,
+                    Path = "/"
+                };
+
+                Response.Cookies.Append("UserLogged", request.Username, cookieOptions);
                 _userService.EnsureUserActive(request.Username);
                 return Ok();
             }

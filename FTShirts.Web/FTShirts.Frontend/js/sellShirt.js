@@ -1,4 +1,6 @@
-﻿document.addEventListener("DOMContentLoaded", () => {
+﻿const API_URL = 'http://127.0.0.1:5000';
+
+document.addEventListener("DOMContentLoaded", () => {
     const sellShirtForm = document.getElementById("sellShirtForm");
 
     if (sellShirtForm) {
@@ -26,16 +28,17 @@
                 tags: tagsSelected
             };
 
-            fetch('/api/catalogue', {
+            fetch(`${API_URL}/api/catalogue`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
+                credentials: 'include',
                 body: JSON.stringify(requestBody)
             })
                 .then(response => {
                     if (response.ok) {
-                        window.location.href = "/catalogue/Index.html"; 
+                        window.location.href = "/catalogue/Index.html";
                     } else {
                         throw new Error("Error publishing the shirt.");
                     }
