@@ -1,15 +1,24 @@
+using FTShirts.Web.Data;
 using FTShirts.Web.Services;
+using Microsoft.EntityFrameworkCore; 
 using Microsoft.AspNetCore.Localization;
 using System.Globalization;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var connectionString = builder.Configuration.GetConnectionString("FTShirtsConnection")
+    ?? throw new InvalidOperationException("Connection string 'FTShirtsConnection' is not found.");
+
+builder.Services.AddDbContext<FTShirtsContext>(options =>
+    options.UseNpgsql(connectionString)
+           .UseSnakeCaseNamingConvention());
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:5500", "http://127.0.0.1:5500") 
+        policy.WithOrigins("http://localhost:5500", "http://127.0.0.1:5500")
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
@@ -40,7 +49,6 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseRouting();
 
 app.UseCors(policy =>

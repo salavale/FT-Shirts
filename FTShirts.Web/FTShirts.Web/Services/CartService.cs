@@ -35,7 +35,7 @@ namespace FTShirts.Web.Services
 
                 if (itemToAdd != null)
                 {
-                    activeUser.ShoppingCart.AddItem(itemToAdd.Value);
+                    activeUser.ShoppingCart.AddItem(itemToAdd);
                 }
             }
         }

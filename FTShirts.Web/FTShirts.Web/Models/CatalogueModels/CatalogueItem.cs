@@ -3,15 +3,21 @@
 namespace FTShirts.Web.Models.CatalogueModels
 {
     //Our list on the catalogue will be the shirt, if it has any offer and the amount is discounted
-    public struct CatalogueItem
+    public class CatalogueItem
     {
-        public Shirt TShirt { get; set; }
+        public int ShirtId { get; set; }
+        public Shirt TShirt { get; set; } = null!;
+
         public Offer OfferType { get; set; }
         public int? OfferDiscount { get; set; }
-        public List<string> Tags { get; }
+
+        public List<string> Tags { get; set; } = new();
+
         //constructor
         public CatalogueItem(Shirt shirt, Offer offerType, int? discount = null, IEnumerable<string>? tags = null)
         {
+
+            ShirtId = shirt.Id;
             TShirt = shirt;
             OfferType = offerType;
             OfferDiscount = discount;
@@ -42,7 +48,7 @@ namespace FTShirts.Web.Models.CatalogueModels
             Size size = Enum.Parse<Size>(data[6]);
 
             TShirt = new Shirt(id, team, price, isSecondHand, pNumber, pName, size);
-
+            ShirtId = TShirt.Id;
             OfferType = Enum.Parse<Offer>(data[7]);
             OfferDiscount = string.IsNullOrEmpty(data[8]) ? null : int.Parse(data[8]);
             for (var i = 9; i < data.Length; i++)
