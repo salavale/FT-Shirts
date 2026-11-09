@@ -56,8 +56,16 @@ function updateIUser() {
     const btnLogoutBtn = document.getElementById("btnLogoutBtn");
     if (btnLogoutBtn) {
         btnLogoutBtn.addEventListener("click", () => {
-            document.cookie = "UserLogged=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-            window.location.href = "/";
+            // Avisamos al backend para que borre la sesión y el carrito del usuario
+            fetch(`${API_URL}/api/user/logout`, {
+                method: 'DELETE',
+                credentials: 'include'
+            })
+                .catch(error => console.error("Error logging out:", error))
+                .finally(() => {
+                    document.cookie = "UserLogged=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                    window.location.href = "/";
+                });
         });
     }
 }

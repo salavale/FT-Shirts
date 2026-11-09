@@ -1,4 +1,4 @@
-﻿const API_URL = 'http://127.0.0.1:5000';
+﻿// API_URL se define en js/config.js (cargado antes que este archivo).
 
 document.addEventListener("DOMContentLoaded", () => {
     if (document.getElementById("catalogueTableBody")) {
@@ -46,7 +46,9 @@ function loadCatalogue(url) {
     const tableBody = document.getElementById("catalogueTableBody");
     const isLogged = getCookie("UserLogged") !== null && getCookie("UserLogged") !== "";
 
-    fetch(url)
+    fetch(url, {
+        credentials: 'include'
+    })
         .then(response => {
             if (!response.ok) throw new Error("Error al cargar el catálogo.");
             return response.json();

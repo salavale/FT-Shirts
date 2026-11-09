@@ -1,4 +1,4 @@
-﻿const API_URL = 'http://127.0.0.1:5000';
+﻿// API_URL se define en js/config.js (cargado antes que este archivo).
 document.addEventListener("DOMContentLoaded", () => {
     const loginForm = document.getElementById("loginForm");
 
@@ -26,6 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (response.ok) {
                         window.location.href = "/catalogue/Index.html";
                     } else if (response.status === 401) {
+                        alert("Wrong username or password.");
                     } else {
                         throw new Error("Login failed.");
                     }

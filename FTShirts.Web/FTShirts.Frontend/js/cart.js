@@ -1,4 +1,4 @@
-﻿const API_URL = 'http://127.0.0.1:5000';
+﻿// API_URL se define en js/config.js (cargado antes que este archivo).
 
 document.addEventListener("DOMContentLoaded", () => {
     if (document.getElementById("cartTableBody")) {
