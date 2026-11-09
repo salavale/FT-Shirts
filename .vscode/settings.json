@@ -1,0 +1,7 @@
+{
+  "liveServer.settings.root": "/FTShirts.Web/FTShirts.Frontend",
+  "liveServer.settings.port": 5500,
+  "liveServer.settings.ignoreFiles": [
+    "FTShirts.Web/FTShirts.Web/**"
+  ]
+}
