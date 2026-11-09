@@ -1,6 +1,6 @@
 using FTShirts.Web.Data;
 using FTShirts.Web.Services;
-using Microsoft.EntityFrameworkCore; 
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Localization;
 using System.Globalization;
 using System.Text.Json.Serialization;
@@ -20,7 +20,8 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins("http://localhost:5500", "http://127.0.0.1:5500")
               .AllowAnyHeader()
-              .AllowAnyMethod();
+              .AllowAnyMethod()
+              .AllowCredentials(); 
     });
 });
 
@@ -51,11 +52,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 
-app.UseCors(policy =>
-    policy.WithOrigins("http://127.0.0.1:5500", "http://localhost:5500")
-          .AllowAnyHeader()
-          .AllowAnyMethod()
-          .AllowCredentials());
+app.UseCors("AllowFrontend");
 
 app.UseAuthorization();
 
