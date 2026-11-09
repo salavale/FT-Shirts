@@ -2,4 +2,22 @@
 # Este archivo .gitignore ha sido creado automáticamente por Microsoft(R) Visual Studio.
 ################################################################################
 
+# Build results
+[Bb]in/
+[Oo]bj/
+[Ll]ogs/
+[Uu]serSecrets/
+
+# Visual Studio files
 .vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# ASP.NET Core User Secrets
+*.user
+secrets.json
+
+# Appsettings local overrides
+appsettings.Development.json
