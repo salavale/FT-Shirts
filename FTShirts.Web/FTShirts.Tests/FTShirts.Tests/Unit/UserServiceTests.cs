@@ -38,11 +38,29 @@ namespace FTShirts.Tests.Unit
         public void EnsureUserActive_ThenLogOut_AddsAndRemovesTheActiveUser()
         {
             _userService.EnsureUserActive(_username);
-            _userService.EnsureUserActive(_username);
-            Assert.Single(UserService.ActiveUsers, u => u.Username == _username);
+            Assert.True(UserService.ActiveUsers.ContainsKey(_username));
 
             _userService.LogOutUpdate(_username);
-            Assert.DoesNotContain(UserService.ActiveUsers, u => u.Username == _username);
+            Assert.False(UserService.ActiveUsers.ContainsKey(_username));
+        }
+
+        [Fact]
+        public void EnsureUserActive_CalledTwice_KeepsTheSameUserAndCart()
+        {
+            _userService.EnsureUserActive(_username);
+            var first = UserService.ActiveUsers[_username];
+
+            _userService.EnsureUserActive(_username);
+
+            Assert.Same(first, UserService.ActiveUsers[_username]);
+        }
+
+        [Fact]
+        public void LogOutUpdate_NoUsername_DoesNothing()
+        {
+            var exception = Record.Exception(() => _userService.LogOutUpdate(null!));
+
+            Assert.Null(exception);
         }
     }
 }
