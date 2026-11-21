@@ -48,5 +48,13 @@ namespace FTShirts.Tests.Unit
             Assert.Equal("dummy", user.Username);
             Assert.Empty(user.ShoppingCart.Items);
         }
+
+        [Fact]
+        public void AddItemToCart_ManyRequestsAtTheSameTime_OneCartWithEveryShirt()
+        {
+            Parallel.For(0, 100, _ => _cartService.AddItemToCart(_username, 2));
+
+            Assert.Equal(100, _cartService.GetCartForUser(_username).ShoppingCart.Items.Count);
+        }
     }
 }
