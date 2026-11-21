@@ -10,28 +10,34 @@ namespace FTShirts.Tests.Unit
         private readonly string _username = $"user-{Guid.NewGuid():N}";
 
         [Fact]
-        public void ValidateLogin_CorrectPassword_ReturnsTrue()
+        public async Task ValidateLoginAsync_CorrectPassword_ReturnsTrue()
         {
-            Assert.True(_userService.ValidateLogin(new LogRegRequest("admin", "1234")));
+            Assert.True(await _userService.ValidateLoginAsync(new LogRegRequest("admin", "1234")));
         }
 
         [Fact]
-        public void ValidateLogin_WrongPassword_ReturnsFalse()
+        public async Task ValidateLoginAsync_WrongPassword_ReturnsFalse()
         {
-            Assert.False(_userService.ValidateLogin(new LogRegRequest("admin", "wrong-password")));
+            Assert.False(await _userService.ValidateLoginAsync(new LogRegRequest("admin", "wrong-password")));
         }
 
         [Fact]
-        public void RegisterUser_NewUsername_CanLogInAfterwards()
+        public async Task ValidateLoginAsync_UnknownUser_ReturnsFalse()
         {
-            Assert.True(_userService.RegisterUser(new LogRegRequest(_username, "secret")));
-            Assert.True(_userService.ValidateLogin(new LogRegRequest(_username, "secret")));
+            Assert.False(await _userService.ValidateLoginAsync(new LogRegRequest(_username, "secret")));
         }
 
         [Fact]
-        public void RegisterUser_UsernameTaken_ReturnsFalse()
+        public async Task RegisterUserAsync_NewUsername_CanLogInAfterwards()
         {
-            Assert.False(_userService.RegisterUser(new LogRegRequest("admin", "other-password")));
+            Assert.True(await _userService.RegisterUserAsync(new LogRegRequest(_username, "secret")));
+            Assert.True(await _userService.ValidateLoginAsync(new LogRegRequest(_username, "secret")));
+        }
+
+        [Fact]
+        public async Task RegisterUserAsync_UsernameTaken_ReturnsFalse()
+        {
+            Assert.False(await _userService.RegisterUserAsync(new LogRegRequest("admin", "other-password")));
         }
 
         [Fact]
