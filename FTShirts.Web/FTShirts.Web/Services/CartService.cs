@@ -13,30 +13,29 @@ namespace FTShirts.Web.Services
 
         public User GetCartForUser(string username)
         {
-            if (string.IsNullOrEmpty(username) || !UserService.ActiveUsers.Any(u => u.Username == username))
+            if (!string.IsNullOrEmpty(username) && UserService.ActiveUsers.TryGetValue(username, out var activeUser))
             {
-                return new User();
+                return activeUser;
             }
 
-            return UserService.ActiveUsers.First(u => u.Username == username);
+            return new User();
         }
 
         public void AddItemToCart(string username, int shirtId)
         {
-            if (!string.IsNullOrEmpty(username))
+            if (string.IsNullOrEmpty(username))
             {
-                if (!UserService.ActiveUsers.Any(u => u.Username == username))
-                {
-                    UserService.ActiveUsers.Add(new User(username));
-                }
+                return;
+            }
 
-                User activeUser = UserService.ActiveUsers.First(m => m.Username == username);
-                var itemToAdd = _catalogueService.GetItemById(shirtId);
+            // GetOrAdd finds the user or adds it in one atomic step, so two requests
+            // at the same time can never create two carts for the same user
+            User activeUser = UserService.ActiveUsers.GetOrAdd(username, name => new User(name));
+            var itemToAdd = _catalogueService.GetItemById(shirtId);
 
-                if (itemToAdd != null)
-                {
-                    activeUser.ShoppingCart.AddItem(itemToAdd.Value);
-                }
+            if (itemToAdd != null)
+            {
+                activeUser.ShoppingCart.AddItem(itemToAdd.Value);
             }
         }
     }
