@@ -2,6 +2,7 @@
 using EFCore.NamingConventions;
 using FTShirts.Web.Models.CatalogueModels;
 using FTShirts.Web.Models.UserModels;
+using FTShirts.Web.Models.CartModels;
 
 namespace FTShirts.Web.Data
 {
@@ -15,13 +16,16 @@ namespace FTShirts.Web.Data
         public DbSet<Shirt> Shirts => Set<Shirt>();
         public DbSet<User> Users => Set<User>();
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder model)
         {
-            base.OnModelCreating(modelBuilder);
+            base.OnModelCreating(model);
 
-            modelBuilder.Entity<User>().HasIndex(u => u.Username).IsUnique();
-            modelBuilder.Entity<CatalogueItem>().HasKey(c => c.ShirtId);
-            modelBuilder.Entity<CatalogueItem>().HasMany(g => g.Tags).WithMany();
+            model.Entity<User>().HasKey(u => u.Username);
+            model.Entity<CatalogueItem>().HasKey(c => c.ShirtId);
+
+            model.Entity<ShoppingCart>().HasKey(s => s.Username);
+
+            model.Entity<User>().HasOne(u => u.ShoppingCart).WithOne().HasForeignKey<ShoppingCart>(s => s.Username);
         }
 
         public static void Configure(DbContextOptionsBuilder options, string connectionString)

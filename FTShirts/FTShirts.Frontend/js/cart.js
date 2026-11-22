@@ -20,11 +20,14 @@ function loadShoppingCart() {
             const cartContent = document.getElementById("cartContent");
             const cartTotal = document.getElementById("cartTotal");
 
-            const items = user.shoppingCart.items || [];
+            const items = (user && user.shoppingCart && Array.isArray(user.shoppingCart.items))
+                ? user.shoppingCart.items
+                : [];
 
             if (items.length === 0) {
                 if (emptyCartMessage) emptyCartMessage.style.display = "block";
                 if (cartContent) cartContent.style.display = "none";
+                if (cartTotal) cartTotal.textContent = "0.00";
                 return;
             }
 
@@ -36,21 +39,23 @@ function loadShoppingCart() {
 
             items.forEach(item => {
                 const tr = document.createElement("tr");
+                const shirt = item.tShirt || {};
+                const price = Number(item.finalPrice ?? 0);
 
-                let details = `Size: ${item.tShirt.size}`;
-                if (item.tShirt.pName) {
-                    details += ` | Player: ${item.tShirt.pName}`;
-                    if (item.tShirt.pNumber) details += ` (${item.tShirt.pNumber})`;
+                let details = `Size: ${shirt.size ?? "-"}`;
+                if (shirt.pName) {
+                    details += ` | Player: ${shirt.pName}`;
+                    if (shirt.pNumber) details += ` (${shirt.pNumber})`;
                 }
 
                 tr.innerHTML = `
-                    <td><strong>${item.tShirt.team}</strong></td>
+                    <td><strong>${shirt.team ?? "Unknown"}</strong></td>
                     <td>${details}</td>
-                    <td class="text-end">${item.finalPrice.toFixed(2)} €</td>
+                    <td class="text-end">${price.toFixed(2)} €</td>
                 `;
 
                 cartTableBody.appendChild(tr);
-                total += item.finalPrice;
+                total += price;
             });
 
             if (cartTotal) {

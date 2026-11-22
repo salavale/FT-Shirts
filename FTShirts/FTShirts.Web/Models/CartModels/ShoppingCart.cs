@@ -4,6 +4,7 @@ namespace FTShirts.Web.Models.CartModels
 {
     public class ShoppingCart
     {
+        public string Username { get; set; } = string.Empty;
         public List<CatalogueItem> Items { get; set; } = new List<CatalogueItem>();
 
         public void AddItem(CatalogueItem item)

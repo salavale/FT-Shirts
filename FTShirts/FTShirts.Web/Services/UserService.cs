@@ -1,53 +1,60 @@
-﻿using FTShirts.Web.Models.CatalogueModels;
+﻿using FTShirts.Web.Data;
+using FTShirts.Web.Models.CartModels;
 using FTShirts.Web.Models.UserModels;
 using FTShirts.Web.Models.UserModels.UserRequest;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
 namespace FTShirts.Web.Services
 {
     public class UserService : IUserService
     {
-        private const string FilePath = "./Data/users.csv";
+        private readonly FTShirtsContext _ftshirts_context;
 
-        public static List<User> ActiveUsers { get; } = new List<User>();
+        public UserService(FTShirtsContext context)
+        {
+            _ftshirts_context = context;
+        }
 
         public bool ValidateLogin(LogRegRequest request)
         {
-            if (!File.Exists(FilePath))
-            {
-                return false;
-            }
-
-            string expectedLine = request.Username + "," + request.Password;
-            return File.ReadLines(FilePath).Any(line => line == expectedLine);
+            return _ftshirts_context.Users
+                .Any(u => u.Username == request.Username && u.Password == request.Password);
         }
 
         public bool RegisterUser(LogRegRequest request)
         {
-            if (File.Exists(FilePath))
+            if (_ftshirts_context.Users.Any(u => u.Username == request.Username))
             {
-                if (File.ReadLines(FilePath).Any(line => line.StartsWith(request.Username + ",")))
-                {
-                    return false;
-                }
+                return false;
             }
 
-            File.AppendAllText(FilePath, request.Username + "," + request.Password + "\n");
+            var newUser = new User(request.Username, request.Password)
+            {
+                ShoppingCart = new ShoppingCart { Username = request.Username }
+            };
+
+            _ftshirts_context.Users.Add(newUser);
+            _ftshirts_context.SaveChanges();
             return true;
         }
 
         public void EnsureUserActive(string username)
         {
-            if (!ActiveUsers.Any(u => u.Username == username))
+            if (string.IsNullOrEmpty(username))
             {
-                ActiveUsers.Add(new User(username));
+                return;
+            }
+
+            var user = _ftshirts_context.Users.FirstOrDefault(u => u.Username == username);
+            if (user != null && _ftshirts_context.Set<ShoppingCart>().All(c => c.Username != username))
+            {
+                _ftshirts_context.Set<ShoppingCart>().Add(new ShoppingCart { Username = username });
+                _ftshirts_context.SaveChanges();
             }
         }
+
         public void LogOutUpdate(string username)
         {
-            ActiveUsers.RemoveAll(i => i.Username == username);
         }
     }
 }
