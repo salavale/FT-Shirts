@@ -50,9 +50,20 @@ namespace FTShirts.Web.Services
 
         public CatalogueItem? GetItemByIdAsync(int id)
         {
-            return _context.CatalogueItems
+            if (id <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(id), "Item ID must be greater than 0.");
+            }
+            var item = _context.CatalogueItems
                 .Include(i => i.TShirt)
                 .FirstOrDefault(i => i.ShirtId == id);
+
+            if (item == null)
+            {
+                throw new CatalogueItemNotFoundException(id);
+            }
+
+            return item;
         }
 
         public void AddItemAsync(AddShirtRequest request)
