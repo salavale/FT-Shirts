@@ -18,7 +18,10 @@ namespace FTShirts.Web.Services
         // and changed by several threads at the same time.
         public static ConcurrentDictionary<string, User> ActiveUsers { get; } = new ConcurrentDictionary<string, User>();
 
-        public bool ValidateLogin(LogRegRequest request)
+        // Reading users.csv is IO, so it is done asynchronously: while the file is being read,
+        // the thread is free to serve other requests instead of waiting.
+        // ReadLinesAsync still reads the file line by line (as a stream) and stops at the first match.
+        public async Task<bool> ValidateLoginAsync(LogRegRequest request)
         {
             if (!File.Exists(FilePath))
             {
@@ -26,20 +29,30 @@ namespace FTShirts.Web.Services
             }
 
             string expectedLine = request.Username + "," + request.Password;
-            return File.ReadLines(FilePath).Any(line => line == expectedLine);
+            await foreach (string line in File.ReadLinesAsync(FilePath))
+            {
+                if (line == expectedLine)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
-        public bool RegisterUser(LogRegRequest request)
+        public async Task<bool> RegisterUserAsync(LogRegRequest request)
         {
             if (File.Exists(FilePath))
             {
-                if (File.ReadLines(FilePath).Any(line => line.StartsWith(request.Username + ",")))
+                await foreach (string line in File.ReadLinesAsync(FilePath))
                 {
-                    return false;
+                    if (line.StartsWith(request.Username + ","))
+                    {
+                        return false;
+                    }
                 }
             }
 
-            File.AppendAllText(FilePath, request.Username + "," + request.Password + "\n");
+            await File.AppendAllTextAsync(FilePath, request.Username + "," + request.Password + "\n");
             return true;
         }
 

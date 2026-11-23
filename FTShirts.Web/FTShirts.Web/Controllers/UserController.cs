@@ -24,9 +24,9 @@ namespace FTShirts.Web.Controllers
             _userService = userService;
         }
         [HttpPost("login")]
-        public IActionResult Login([FromBody] LogRegRequest request)
+        public async Task<IActionResult> Login([FromBody] LogRegRequest request)
         {
-            bool loginSuccess = _userService.ValidateLogin(request);
+            bool loginSuccess = await _userService.ValidateLoginAsync(request);
 
             if (loginSuccess)
             {
@@ -54,9 +54,9 @@ namespace FTShirts.Web.Controllers
         }
 
         [HttpPost("register")]
-        public IActionResult Register([FromBody] LogRegRequest newRequest)
+        public async Task<IActionResult> Register([FromBody] LogRegRequest newRequest)
         {
-            bool success = _userService.RegisterUser(newRequest);
+            bool success = await _userService.RegisterUserAsync(newRequest);
 
             if (!success)
             {
