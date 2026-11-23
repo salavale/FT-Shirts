@@ -26,6 +26,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 builder.Services.AddScoped<ICatalogueService, CatalogueService>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddSingleton<IActiveUserStore, ActiveUserStore>();
 
 var app = builder.Build();
 
