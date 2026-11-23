@@ -1,15 +1,25 @@
 using FTShirts.Web.Services;
-using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Localization;
 using System.Globalization;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:5500", "http://127.0.0.1:5500") 
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
+
 builder.Services.AddScoped<ICatalogueService, CatalogueService>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IUserService, UserService>();
@@ -31,10 +41,14 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseDefaultFiles();
-app.UseStaticFiles();
-
 app.UseRouting();
+
+app.UseCors(policy =>
+    policy.WithOrigins("http://127.0.0.1:5500", "http://localhost:5500")
+          .AllowAnyHeader()
+          .AllowAnyMethod()
+          .AllowCredentials());
+
 app.UseAuthorization();
 
 app.MapControllers();

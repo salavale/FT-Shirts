@@ -1,11 +1,15 @@
-﻿document.addEventListener("DOMContentLoaded", () => {
+﻿const API_URL = 'http://127.0.0.1:5000';
+
+document.addEventListener("DOMContentLoaded", () => {
     if (document.getElementById("cartTableBody")) {
         loadShoppingCart();
     }
 });
 
 function loadShoppingCart() {
-    fetch('/api/cart')
+    fetch(`${API_URL}/api/cart`, {
+        credentials: 'include'
+    })
         .then(response => {
             if (!response.ok) throw new Error("Error loading shopping cart.");
             return response.json();

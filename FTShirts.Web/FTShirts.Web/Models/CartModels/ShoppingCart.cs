@@ -2,7 +2,7 @@
 
 namespace FTShirts.Web.Models.CartModels
 {
-    public class SCart
+    public class ShoppingCart
     {
         public List<CatalogueItem> Items { get; set; } = new List<CatalogueItem>();
 

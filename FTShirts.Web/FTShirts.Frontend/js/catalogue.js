@@ -1,40 +1,42 @@
-﻿document.addEventListener("DOMContentLoaded", () => {
-    if (document.getElementById("catalogueTableBody")) {
-        
-        loadCatalogue('/api/catalogue');
+﻿const API_URL = 'http://127.0.0.1:5000';
 
-        
+document.addEventListener("DOMContentLoaded", () => {
+    if (document.getElementById("catalogueTableBody")) {
+
+        loadCatalogue(`${API_URL}/api/catalogue`);
+
+
         const searchForm = document.getElementById("searchForm");
         if (searchForm) {
             searchForm.addEventListener("submit", (e) => {
-                e.preventDefault(); 
+                e.preventDefault();
 
                 const team = document.getElementById("teamInput").value.trim();
                 const onlyOffer = document.getElementById("checkOfertas").checked;
 
-                
+
                 const tagsSelected = Array.from(document.querySelectorAll('input[name="tags"]:checked')).map(cb => cb.value);
 
-                
+
                 const params = new URLSearchParams();
                 if (team) params.append("team", team);
                 if (onlyOffer) params.append("onlyOffer", "true");
                 tagsSelected.forEach(tag => params.append("tags", tag));
 
                 const queryString = params.toString();
-                
-                const url = queryString ? `/api/catalogue/search?${queryString}` : '/api/catalogue';
+
+                const url = queryString ? `${API_URL}/api/catalogue/search?${queryString}` : `${API_URL}/api/catalogue`;
 
                 loadCatalogue(url);
             });
         }
 
-        
+
         const btnViewAll = document.getElementById("btnViewAll");
         if (btnViewAll) {
             btnViewAll.addEventListener("click", () => {
-                if (searchForm) searchForm.reset(); 
-                loadCatalogue('/api/catalogue');   
+                if (searchForm) searchForm.reset();
+                loadCatalogue(`${API_URL}/api/catalogue`);
             });
         }
     }
@@ -102,11 +104,13 @@ function loadCatalogue(url) {
 function addToCart(event, shirtId) {
     event.preventDefault();
 
-    fetch(`/api/cart/add/${shirtId}`, {
-        method: 'POST'
+    fetch(`${API_URL}/api/cart/add/${shirtId}`, {
+        method: 'POST',
+        credentials: 'include' 
     })
         .then(response => {
             if (response.ok) {
+                alert("Shirt added to cart successfully!"); 
             } else if (response.status === 401) {
                 window.location.href = "/user/UserLogin.html";
             } else {
