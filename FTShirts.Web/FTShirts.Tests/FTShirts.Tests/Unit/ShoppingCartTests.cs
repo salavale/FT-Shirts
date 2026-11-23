@@ -62,6 +62,16 @@ namespace FTShirts.Tests.Unit
             Assert.Empty(cart.Items);
         }
 
+        [Fact]
+        public void AddItem_ManyThreadsAtTheSameTime_KeepsEveryItem()
+        {
+            var cart = new ShoppingCart();
+
+            Parallel.For(0, 1000, _ => cart.AddItem(Regular));
+
+            Assert.Equal(1000, cart.Items.Count);
+        }
+
         private static ShoppingCart CartWith(params CatalogueItem[] items)
         {
             var cart = new ShoppingCart();

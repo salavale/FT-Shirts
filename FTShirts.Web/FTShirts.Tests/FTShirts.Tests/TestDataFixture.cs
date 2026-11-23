@@ -1,8 +1,8 @@
 ﻿// Created once before the first test and disposed after the last one.
 [assembly: AssemblyFixture(typeof(FTShirts.Tests.TestDataFixture))]
 
-// The application keeps static state (the catalogue and the list of active users) that is not
-// thread-safe, so the tests must not run in parallel until that state is made thread-safe.
+// The catalogue is still kept in a static list that is not thread-safe (it will move to the
+// database), so the tests must not run in parallel until then.
 [assembly: CollectionBehavior(CollectionBehavior.CollectionPerAssembly)]
 namespace FTShirts.Tests
 {
