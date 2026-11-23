@@ -22,13 +22,13 @@ namespace FTShirts.Web.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<CatalogueItem>> Index()
+        public async Task<ActionResult<IEnumerable<CatalogueItem>>> Index()
         {
-            return Ok(_catalogueService.GetAllItems());
+            return Ok(await _catalogueService.GetAllItemsAsync());
         }
 
         [HttpGet("search")]
-        public ActionResult<IEnumerable<CatalogueItem>> Search([FromQuery] string? team, [FromQuery] bool? onlyOffer, [FromQuery] IEnumerable<string>? tags)
+        public async Task<ActionResult<IEnumerable<CatalogueItem>>> Search([FromQuery] string? team, [FromQuery] bool? onlyOffer, [FromQuery] IEnumerable<string>? tags)
         {
             bool memberLogged = true;
             if (string.IsNullOrEmpty(Request.Cookies["UserLogged"]))
@@ -36,13 +36,13 @@ namespace FTShirts.Web.Controllers
                 memberLogged = false;
             }
 
-            return Ok(_catalogueService.SearchItems(team, onlyOffer, tags, memberLogged));
+            return Ok(await _catalogueService.SearchItemsAsync(team, onlyOffer, tags, memberLogged));
         }
 
         [HttpGet("{id}")]
-        public ActionResult<CatalogueItem> GetById(int id)
+        public async Task<ActionResult<CatalogueItem>> GetById(int id)
         {
-            var item = _catalogueService.GetItemById(id);
+            var item = await _catalogueService.GetItemByIdAsync(id);
 
             if (item == null)
             {
@@ -52,11 +52,10 @@ namespace FTShirts.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddItem([FromBody] AddShirtRequest request)
+        public async Task<IActionResult> AddItem([FromBody] AddShirtRequest request)
         {
-            _catalogueService.AddItem(request);
+            await _catalogueService.AddItemAsync(request);
             return Ok();
         }
     }
 }
-

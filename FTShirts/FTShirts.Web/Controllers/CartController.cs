@@ -18,19 +18,19 @@ namespace FTShirts.Web.Controllers
         }
 
         [HttpGet]
-        public ActionResult<User> GetCart()
+        public async Task<ActionResult<User>> GetCart()
         {
             string username = Request.Cookies["UserLogged"];
-            return Ok(_cartService.GetCartForUser(username));
+            return Ok(await _cartService.GetCartForUserAsync(username));
         }
 
 
         [HttpPost("add/{shirtId}")]
-        public IActionResult AddToCart(int shirtId)
+        public async Task<IActionResult> AddToCart(int shirtId)
         {
             string username = Request.Cookies["UserLogged"];
 
-            _cartService.AddItemToCart(username, shirtId);
+            await _cartService.AddItemToCartAsync(username, shirtId);
             return Ok();
         }
     }

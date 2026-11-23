@@ -17,18 +17,19 @@ namespace FTShirts.Web.Services
             _context = context;
         }
 
-        public User GetCartForUser(string username)
+        // The cart is read from and saved to the database, so these methods are asynchronous
+        public async Task<User> GetCartForUserAsync(string username)
         {
             if (string.IsNullOrEmpty(username))
             {
                 return new User();
             }
 
-            var user = _context.Users
+            var user = await _context.Users
                 .Include(u => u.ShoppingCart)
                     .ThenInclude(c => c.Items)
                         .ThenInclude(i => i.TShirt)
-                .FirstOrDefault(u => u.Username == username);
+                .FirstOrDefaultAsync(u => u.Username == username);
 
             if (user == null)
             {
@@ -39,18 +40,18 @@ namespace FTShirts.Web.Services
             return user;
         }
 
-        public void AddItemToCart(string username, int shirtId)
+        public async Task AddItemToCartAsync(string username, int shirtId)
         {
             if (string.IsNullOrEmpty(username))
             {
                 return;
             }
 
-            var user = _context.Users
+            var user = await _context.Users
                 .Include(u => u.ShoppingCart)
                     .ThenInclude(c => c.Items)
                         .ThenInclude(i => i.TShirt)
-                .FirstOrDefault(u => u.Username == username);
+                .FirstOrDefaultAsync(u => u.Username == username);
 
             if (user == null)
             {
@@ -62,11 +63,11 @@ namespace FTShirts.Web.Services
                 user.ShoppingCart = new ShoppingCart { Username = username };
             }
 
-            var itemToAdd = _catalogueService.GetItemById(shirtId);
+            var itemToAdd = await _catalogueService.GetItemByIdAsync(shirtId);
             if (itemToAdd != null)
             {
                 user.ShoppingCart.AddItem(itemToAdd);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
         }
     }

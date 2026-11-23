@@ -18,21 +18,25 @@ namespace FTShirts.Web.Services
             _context = context;
         }
 
-        private IEnumerable<CatalogueItem> LoadCatalogueItems()
+        // Every query to the database is IO, so it is done asynchronously:
+        // while the database answers, the thread is free to serve other requests.
+        private async Task<List<CatalogueItem>> LoadCatalogueItemsAsync()
         {
-            return _context.CatalogueItems
+            return await _context.CatalogueItems
                 .Include(i => i.TShirt)
-                .AsEnumerable();
+                .ToListAsync();
         }
 
-        public IEnumerable<CatalogueItem> GetAllItems()
+        public async Task<IEnumerable<CatalogueItem>> GetAllItemsAsync()
         {
-            return LoadCatalogueItems().ToList();
+            return await LoadCatalogueItemsAsync();
         }
 
-        public IEnumerable<CatalogueItem> SearchItems(string? team, bool? onlyOffer, IEnumerable<string>? tags, bool? memberLogged)
+        public async Task<IEnumerable<CatalogueItem>> SearchItemsAsync(string? team, bool? onlyOffer, IEnumerable<string>? tags, bool? memberLogged)
         {
-            var results = LoadCatalogueItems().GetItemsByTeam(team: team);
+            // The items are loaded from the database asynchronously,
+            // then filtered in memory with the extension methods
+            var results = (await LoadCatalogueItemsAsync()).GetItemsByTeam(team: team);
 
             if (onlyOffer.HasValue && onlyOffer.Value)
             {
@@ -51,16 +55,16 @@ namespace FTShirts.Web.Services
             return results.ToList();
         }
 
-        public CatalogueItem? GetItemById(int id)
+        public async Task<CatalogueItem?> GetItemByIdAsync(int id)
         {
-            return _context.CatalogueItems
+            return await _context.CatalogueItems
                 .Include(i => i.TShirt)
-                .FirstOrDefault(i => i.ShirtId == id);
+                .FirstOrDefaultAsync(i => i.ShirtId == id);
         }
 
-        public void AddItem(AddShirtRequest request)
+        public async Task AddItemAsync(AddShirtRequest request)
         {
-            int maxId = _context.Shirts.Any() ? _context.Shirts.Max(s => s.Id) : 0;
+            int maxId = await _context.Shirts.AnyAsync() ? await _context.Shirts.MaxAsync(s => s.Id) : 0;
             int newId = maxId + 1;
 
             Shirt finalShirt = request.Shirt with { Id = newId, IsSecondHand = true };
@@ -72,7 +76,7 @@ namespace FTShirts.Web.Services
 
             _context.Shirts.Add(finalShirt);
             _context.CatalogueItems.Add(newItem);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
     }
 }

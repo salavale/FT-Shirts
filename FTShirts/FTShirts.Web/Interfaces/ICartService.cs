@@ -4,7 +4,7 @@ namespace FTShirts.Web.Services
 {
     public interface ICartService
     {
-        User GetCartForUser(string username);
-        void AddItemToCart(string username, int shirtId);
+        Task<User> GetCartForUserAsync(string username);
+        Task AddItemToCartAsync(string username, int shirtId);
     }
 }
