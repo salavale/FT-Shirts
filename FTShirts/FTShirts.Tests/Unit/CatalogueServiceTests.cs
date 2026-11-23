@@ -27,7 +27,7 @@ namespace FTShirts.Tests.Unit
         {
             SeedItem(1, "Boca Juniors", 40m, Offer.No, null, new[] { "classic" });
 
-            var items = _catalogueService.GetAllItems().ToList();
+            var items = _catalogueService.GetAllItemsAsync().ToList();
 
             Assert.Contains(items, i => i.TShirt != null && i.TShirt.Team == "Boca Juniors");
         }
@@ -37,11 +37,11 @@ namespace FTShirts.Tests.Unit
         {
             var seeded = SeedItem(2, "Boca Juniors", 40m, Offer.No, null, Array.Empty<string>());
 
-            var found = _catalogueService.GetItemById(seeded.TShirt!.Id);
+            var found = _catalogueService.GetItemByIdAsync(seeded.TShirt!.Id);
 
             Assert.NotNull(found);
             Assert.Equal("Boca Juniors", found.TShirt!.Team);
-            Assert.Null(_catalogueService.GetItemById(-1));
+            Assert.Null(_catalogueService.GetItemByIdAsync(-1));
         }
 
         [Fact]
@@ -52,7 +52,7 @@ namespace FTShirts.Tests.Unit
             SeedItem(3, "Barcelona", 50m, Offer.No, null, new[] { "retro" });
 
             var results = _catalogueService
-                .SearchItems("real madrid", onlyOffer: false, tags: new[] { "retro" }, memberLogged: false)
+                .SearchItemsAsync("real madrid", onlyOffer: false, tags: new[] { "retro" }, memberLogged: false)
                 .ToList();
 
             Assert.Single(results);
@@ -68,7 +68,7 @@ namespace FTShirts.Tests.Unit
             SeedItem(2, "Boca Juniors", 40m, Offer.No, null, Array.Empty<string>());
 
             var results = _catalogueService
-                .SearchItems(null, onlyOffer: true, tags: null, memberLogged: false)
+                .SearchItemsAsync(null, onlyOffer: true, tags: null, memberLogged: false)
                 .ToList();
 
             Assert.Single(results);
@@ -82,9 +82,9 @@ namespace FTShirts.Tests.Unit
             var shirt = new Shirt(0, team, 25m, false, null, null, Size.L);
             var request = new AddShirtRequest(shirt, new[] { "retro" });
 
-            _catalogueService.AddItem(request);
+            _catalogueService.AddItemAsync(request);
 
-            var saved = Assert.Single(_catalogueService.GetAllItems(), i => i.TShirt != null && i.TShirt.Team == team);
+            var saved = Assert.Single(_catalogueService.GetAllItemsAsync(), i => i.TShirt != null && i.TShirt.Team == team);
             Assert.NotNull(saved.TShirt);
             Assert.True(saved.TShirt.IsSecondHand);
             Assert.True(saved.TShirt.Id > 0);

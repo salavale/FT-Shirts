@@ -31,9 +31,9 @@ namespace FTShirts.Tests.Unit
             SeedUserWithCart(_username, "secret");
             SeedCatalogueItem(2, "Boca Juniors", 45m, Offer.Yes, 20);
 
-            _cartService.AddItemToCart(_username, 2);
+            _cartService.AddItemToCartAsync(_username, 2);
 
-            var user = _cartService.GetCartForUser(_username);
+            var user = _cartService.GetCartForUserAsync(_username);
             Assert.Equal(_username, user.Username);
             var item = Assert.Single(user.ShoppingCart.Items);
             Assert.NotNull(item.TShirt);
@@ -45,9 +45,9 @@ namespace FTShirts.Tests.Unit
         {
             SeedUserWithCart(_username, "secret");
 
-            _cartService.AddItemToCart(_username, 99);
+            _cartService.AddItemToCartAsync(_username, 99);
 
-            var user = _cartService.GetCartForUser(_username);
+            var user = _cartService.GetCartForUserAsync(_username);
             Assert.Empty(user.ShoppingCart.Items);
         }
 
@@ -56,15 +56,15 @@ namespace FTShirts.Tests.Unit
         {
             SeedCatalogueItem(2, "Boca Juniors", 45m, Offer.Yes, 20);
 
-            _cartService.AddItemToCart("", 2);
+            _cartService.AddItemToCartAsync("", 2);
 
-            Assert.Equal("dummy", _cartService.GetCartForUser("").Username);
+            Assert.Equal("dummy", _cartService.GetCartForUserAsync("").Username);
         }
 
         [Fact]
         public void GetCartForUser_UserNotActive_ReturnsEmptyDummyUser()
         {
-            var user = _cartService.GetCartForUser(_username);
+            var user = _cartService.GetCartForUserAsync(_username);
 
             Assert.Equal("dummy", user.Username);
             Assert.Empty(user.ShoppingCart.Items);
