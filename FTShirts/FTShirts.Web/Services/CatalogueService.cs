@@ -4,6 +4,8 @@ using FTShirts.Web.Models;
 using FTShirts.Web.Models.CatalogueModels;
 using FTShirts.Web.Models.CatalogueModels.CatalogueRequest;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace FTShirts.Web.Services
 {
@@ -16,49 +18,53 @@ namespace FTShirts.Web.Services
             _context = context;
         }
 
-        private IEnumerable<CatalogueItem> LoadCatalogueItems()
+        // Every query to the database is IO, so it is done asynchronously:
+        // while the database answers, the thread is free to serve other requests.
+        private async Task<List<CatalogueItem>> LoadCatalogueItemsAsync()
         {
-            return _context.CatalogueItems
+            return await _context.CatalogueItems
                 .Include(i => i.TShirt)
-                .ToList();
+                .ToListAsync();
         }
 
-        public IEnumerable<CatalogueItem> GetAllItemsAsync()
+        public async Task<IEnumerable<CatalogueItem>> GetAllItemsAsync()
         {
-            return LoadCatalogueItems();
+            return await LoadCatalogueItemsAsync();
         }
 
-        public IEnumerable<CatalogueItem> SearchItemsAsync(string? team, bool? onlyOffer, IEnumerable<string>? tags, bool? memberLogged)
+        public async Task<IEnumerable<CatalogueItem>> SearchItemsAsync(string? team, bool? onlyOffer, IEnumerable<string>? tags, bool? memberLogged)
         {
-            var results = LoadCatalogueItems().GetItemsByTeam(team: team);
+            bool isMember = memberLogged == true;
 
-            if (onlyOffer.HasValue && onlyOffer.Value)
+            // Every filter is only used if the user filled it in,
+            // and the whole search runs in the database instead of loading every shirt
+            var query = _context.CatalogueItems
+                .Include(i => i.TShirt)
+                .ToOptionalQuery()
+                // Team: part of the name, without caring about upper or lower case
+                .WhereIf(!string.IsNullOrWhiteSpace(team), item => item.TShirt.Team.ToLower().Contains(team!.ToLower()))
+                // Offers: members also see the offers that are only for members
+                .WhereIf(onlyOffer == true, item => item.OfferType == Offer.Yes || (isMember && item.OfferType == Offer.MemberOnly));
+
+            // Tags: the shirt must have every selected tag
+            foreach (string tag in tags ?? Enumerable.Empty<string>())
             {
-                if (memberLogged == true)
-                {
-                    results = results.GetItemsOnSaleForMembers();
-                }
-                else
-                {
-                    results = results.GetItemsOnSale();
-                }
+                query = query.WhereIf(!string.IsNullOrWhiteSpace(tag), item => item.Tags.Contains(tag));
             }
 
-            results = results.GetItemsWithTags(tags);
-
-            return results.ToList();
+            return await query.ToListAsync();
         }
 
-        public CatalogueItem? GetItemByIdAsync(int id)
+        public async Task<CatalogueItem?> GetItemByIdAsync(int id)
         {
-            return _context.CatalogueItems
+            return await _context.CatalogueItems
                 .Include(i => i.TShirt)
-                .FirstOrDefault(i => i.ShirtId == id);
+                .FirstOrDefaultAsync(i => i.ShirtId == id);
         }
 
-        public void AddItemAsync(AddShirtRequest request)
+        public async Task AddItemAsync(AddShirtRequest request)
         {
-            int maxId = _context.Shirts.Any() ? _context.Shirts.Max(s => s.Id) : 0;
+            int maxId = await _context.Shirts.AnyAsync() ? await _context.Shirts.MaxAsync(s => s.Id) : 0;
             int newId = maxId + 1;
 
             Shirt finalShirt = request.Shirt with { Id = newId, IsSecondHand = true };
@@ -70,7 +76,7 @@ namespace FTShirts.Web.Services
 
             _context.Shirts.Add(finalShirt);
             _context.CatalogueItems.Add(newItem);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
     }
 }
