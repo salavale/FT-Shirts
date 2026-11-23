@@ -3,6 +3,7 @@ using FTShirts.Web.enums;
 using FTShirts.Web.Models;
 using FTShirts.Web.Models.CatalogueModels;
 using FTShirts.Web.Models.CatalogueModels.CatalogueRequest;
+using FTShirts.Web.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,12 +33,20 @@ namespace FTShirts.Web.Services
 
         public IEnumerable<CatalogueItem> SearchItemsAsync(string? team, bool? onlyOffer, IEnumerable<string>? tags, bool? memberLogged)
         {
+            if (team != null && team.Trim().Length == 1)
+            {
+                throw new InvalidTeamSearchException(
+                    team,
+                    "Introduce at least 2 characters for the team name."
+                );
+            }
+
             bool isMember = memberLogged == true;
 
             var query = _context.CatalogueItems
                 .Include(i => i.TShirt)
                 .ToOptionalQuery()
-                .WhereIf(!string.IsNullOrWhiteSpace(team), item => item.TShirt.Team.ToLower().Contains(team!.ToLower()))
+                .WhereIf(!string.IsNullOrWhiteSpace(team), item => item.TShirt.Team.ToLower().Contains(team!.Trim().ToLower()))
                 .WhereIf(onlyOffer == true, item => item.OfferType == Offer.Yes || (isMember && item.OfferType == Offer.MemberOnly));
 
             foreach (string tag in tags ?? Enumerable.Empty<string>())

@@ -1,5 +1,6 @@
 ﻿using FTShirts.Web.Models.CatalogueModels;
 using FTShirts.Web.Models.CatalogueModels.CatalogueRequest;
+using FTShirts.Web.Exceptions;
 using FTShirts.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,7 +29,20 @@ namespace FTShirts.Web.Controllers
         {
             bool memberLogged = !string.IsNullOrEmpty(Request.Cookies["UserLogged"]);
 
-            return Ok(_catalogueService.SearchItemsAsync(team, onlyOffer, tags, memberLogged));
+            try
+            {
+                var results = _catalogueService.SearchItemsAsync(team, onlyOffer, tags, memberLogged);
+                return Ok(results);
+            }
+            catch (InvalidTeamSearchException ex)
+            {
+                return BadRequest(new
+                {
+                    error = "InvalidTeamSearch",
+                    team = ex.Team,
+                    message = ex.Message
+                });
+            }
         }
 
         [HttpGet("{id}")]
