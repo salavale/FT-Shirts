@@ -4,6 +4,8 @@ using FTShirts.Web.Models;
 using FTShirts.Web.Models.CatalogueModels;
 using FTShirts.Web.Models.CatalogueModels.CatalogueRequest;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace FTShirts.Web.Services
 {
@@ -16,7 +18,7 @@ namespace FTShirts.Web.Services
             _context = context;
         }
 
-        private IEnumerable<CatalogueItem> LoadCatalogueItems()
+        private List<CatalogueItem> LoadCatalogueItems()
         {
             return _context.CatalogueItems
                 .Include(i => i.TShirt)
@@ -30,23 +32,20 @@ namespace FTShirts.Web.Services
 
         public IEnumerable<CatalogueItem> SearchItemsAsync(string? team, bool? onlyOffer, IEnumerable<string>? tags, bool? memberLogged)
         {
-            var results = LoadCatalogueItems().GetItemsByTeam(team: team);
+            bool isMember = memberLogged == true;
 
-            if (onlyOffer.HasValue && onlyOffer.Value)
+            var query = _context.CatalogueItems
+                .Include(i => i.TShirt)
+                .ToOptionalQuery()
+                .WhereIf(!string.IsNullOrWhiteSpace(team), item => item.TShirt.Team.ToLower().Contains(team!.ToLower()))
+                .WhereIf(onlyOffer == true, item => item.OfferType == Offer.Yes || (isMember && item.OfferType == Offer.MemberOnly));
+
+            foreach (string tag in tags ?? Enumerable.Empty<string>())
             {
-                if (memberLogged == true)
-                {
-                    results = results.GetItemsOnSaleForMembers();
-                }
-                else
-                {
-                    results = results.GetItemsOnSale();
-                }
+                query = query.WhereIf(!string.IsNullOrWhiteSpace(tag), item => item.Tags.Contains(tag));
             }
 
-            results = results.GetItemsWithTags(tags);
-
-            return results.ToList();
+            return query.ToListAsync().GetAwaiter().GetResult();
         }
 
         public CatalogueItem? GetItemByIdAsync(int id)
