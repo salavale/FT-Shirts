@@ -6,19 +6,24 @@ namespace FTShirts.Web.Services
     public class CartService : ICartService
     {
         private readonly ICatalogueService _catalogueService;
-        public CartService(ICatalogueService catalogueService)
+        private readonly IActiveUserStore _activeUsers;
+
+        // Both dependencies are injected by ASP.NET (see Program.cs), so CartService no longer
+        // reaches into UserService to find the logged-in users
+        public CartService(ICatalogueService catalogueService, IActiveUserStore activeUsers)
         {
             _catalogueService = catalogueService;
+            _activeUsers = activeUsers;
         }
 
         public User GetCartForUser(string username)
         {
-            if (!string.IsNullOrEmpty(username) && UserService.ActiveUsers.TryGetValue(username, out var activeUser))
+            if (string.IsNullOrEmpty(username))
             {
-                return activeUser;
+                return new User();
             }
 
-            return new User();
+            return _activeUsers.Find(username) ?? new User();
         }
 
         public void AddItemToCart(string username, int shirtId)
@@ -28,9 +33,7 @@ namespace FTShirts.Web.Services
                 return;
             }
 
-            // GetOrAdd finds the user or adds it in one atomic step, so two requests
-            // at the same time can never create two carts for the same user
-            User activeUser = UserService.ActiveUsers.GetOrAdd(username, name => new User(name));
+            User activeUser = _activeUsers.GetOrAdd(username);
             var itemToAdd = _catalogueService.GetItemById(shirtId);
 
             if (itemToAdd != null)

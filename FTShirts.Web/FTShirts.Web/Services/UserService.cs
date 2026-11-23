@@ -1,7 +1,6 @@
 ﻿using FTShirts.Web.Models.CatalogueModels;
 using FTShirts.Web.Models.UserModels;
 using FTShirts.Web.Models.UserModels.UserRequest;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,11 +11,15 @@ namespace FTShirts.Web.Services
     {
         private const string FilePath = "./Data/users.csv";
 
-        // Logged-in users and their shopping carts, by username.
-        // Every request runs on its own thread and all of them share this collection,
-        // so it must be thread-safe: unlike List<T>, ConcurrentDictionary can be read
-        // and changed by several threads at the same time.
-        public static ConcurrentDictionary<string, User> ActiveUsers { get; } = new ConcurrentDictionary<string, User>();
+        // The logged-in users are shared by every request, so they live in the
+        // IActiveUserStore singleton. ASP.NET creates a new UserService for each request
+        // (AddScoped) and gives it that same store through the constructor.
+        private readonly IActiveUserStore _activeUsers;
+
+        public UserService(IActiveUserStore activeUsers)
+        {
+            _activeUsers = activeUsers;
+        }
 
         // Reading users.csv is IO, so it is done asynchronously: while the file is being read,
         // the thread is free to serve other requests instead of waiting.
@@ -58,9 +61,7 @@ namespace FTShirts.Web.Services
 
         public void EnsureUserActive(string username)
         {
-            // GetOrAdd checks and adds in one atomic step, so two logins at the same
-            // time can never add the same user twice
-            ActiveUsers.GetOrAdd(username, name => new User(name));
+            _activeUsers.GetOrAdd(username);
         }
 
         public void LogOutUpdate(string username)
@@ -70,7 +71,7 @@ namespace FTShirts.Web.Services
                 return;
             }
 
-            ActiveUsers.TryRemove(username, out _);
+            _activeUsers.Remove(username);
         }
     }
 }

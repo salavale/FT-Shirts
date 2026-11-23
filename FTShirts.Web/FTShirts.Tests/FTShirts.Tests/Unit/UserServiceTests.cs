@@ -6,8 +6,15 @@ namespace FTShirts.Tests.Unit
     // Uses the copy of users.csv prepared by TestDataFixture, never the real file.
     public class UserServiceTests
     {
-        private readonly UserService _userService = new UserService();
+        // Each test gets its own store of logged-in users, injected into the service
+        private readonly ActiveUserStore _activeUsers = new ActiveUserStore();
+        private readonly UserService _userService;
         private readonly string _username = $"user-{Guid.NewGuid():N}";
+
+        public UserServiceTests()
+        {
+            _userService = new UserService(_activeUsers);
+        }
 
         [Fact]
         public async Task ValidateLoginAsync_CorrectPassword_ReturnsTrue()
@@ -44,21 +51,21 @@ namespace FTShirts.Tests.Unit
         public void EnsureUserActive_ThenLogOut_AddsAndRemovesTheActiveUser()
         {
             _userService.EnsureUserActive(_username);
-            Assert.True(UserService.ActiveUsers.ContainsKey(_username));
+            Assert.NotNull(_activeUsers.Find(_username));
 
             _userService.LogOutUpdate(_username);
-            Assert.False(UserService.ActiveUsers.ContainsKey(_username));
+            Assert.Null(_activeUsers.Find(_username));
         }
 
         [Fact]
         public void EnsureUserActive_CalledTwice_KeepsTheSameUserAndCart()
         {
             _userService.EnsureUserActive(_username);
-            var first = UserService.ActiveUsers[_username];
+            var first = _activeUsers.Find(_username);
 
             _userService.EnsureUserActive(_username);
 
-            Assert.Same(first, UserService.ActiveUsers[_username]);
+            Assert.Same(first, _activeUsers.Find(_username));
         }
 
         [Fact]

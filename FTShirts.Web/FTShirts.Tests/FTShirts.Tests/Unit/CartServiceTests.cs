@@ -9,9 +9,9 @@ namespace FTShirts.Tests.Unit
         private static readonly CatalogueItem Boca =
             new CatalogueItem(new Shirt(2, "Boca Juniors", 45m, true, 10, "Maradona", Size.M), Offer.Yes, 20);
 
-        private readonly CartService _cartService = new CartService(new FakeCatalogueService(Boca));
-
-        // Every test uses its own user, because the active users are shared by the whole application
+        // Each test gets its own CartService with its own store of logged-in users,
+        // so tests never share carts
+        private readonly CartService _cartService = new CartService(new FakeCatalogueService(Boca), new ActiveUserStore());
         private readonly string _username = $"user-{Guid.NewGuid():N}";
 
         [Fact]
