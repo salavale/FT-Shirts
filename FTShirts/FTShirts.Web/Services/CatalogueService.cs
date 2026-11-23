@@ -4,8 +4,6 @@ using FTShirts.Web.Models;
 using FTShirts.Web.Models.CatalogueModels;
 using FTShirts.Web.Models.CatalogueModels.CatalogueRequest;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace FTShirts.Web.Services
 {
@@ -22,15 +20,15 @@ namespace FTShirts.Web.Services
         {
             return _context.CatalogueItems
                 .Include(i => i.TShirt)
-                .AsEnumerable();
+                .ToList();
         }
 
-        public IEnumerable<CatalogueItem> GetAllItems()
+        public IEnumerable<CatalogueItem> GetAllItemsAsync()
         {
-            return LoadCatalogueItems().ToList();
+            return LoadCatalogueItems();
         }
 
-        public IEnumerable<CatalogueItem> SearchItems(string? team, bool? onlyOffer, IEnumerable<string>? tags, bool? memberLogged)
+        public IEnumerable<CatalogueItem> SearchItemsAsync(string? team, bool? onlyOffer, IEnumerable<string>? tags, bool? memberLogged)
         {
             var results = LoadCatalogueItems().GetItemsByTeam(team: team);
 
@@ -51,14 +49,14 @@ namespace FTShirts.Web.Services
             return results.ToList();
         }
 
-        public CatalogueItem? GetItemById(int id)
+        public CatalogueItem? GetItemByIdAsync(int id)
         {
             return _context.CatalogueItems
                 .Include(i => i.TShirt)
                 .FirstOrDefault(i => i.ShirtId == id);
         }
 
-        public void AddItem(AddShirtRequest request)
+        public void AddItemAsync(AddShirtRequest request)
         {
             int maxId = _context.Shirts.Any() ? _context.Shirts.Max(s => s.Id) : 0;
             int newId = maxId + 1;

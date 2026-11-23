@@ -2,7 +2,6 @@
 using FTShirts.Web.Models.CartModels;
 using FTShirts.Web.Models.UserModels;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 
 namespace FTShirts.Web.Services
 {
@@ -17,7 +16,7 @@ namespace FTShirts.Web.Services
             _context = context;
         }
 
-        public User GetCartForUser(string username)
+        public User GetCartForUserAsync(string username)
         {
             if (string.IsNullOrEmpty(username))
             {
@@ -26,7 +25,7 @@ namespace FTShirts.Web.Services
 
             var user = _context.Users
                 .Include(u => u.ShoppingCart)
-                    .ThenInclude(c => c.Items)
+                    .ThenInclude(c => c!.Items)
                         .ThenInclude(i => i.TShirt)
                 .FirstOrDefault(u => u.Username == username);
 
@@ -39,7 +38,7 @@ namespace FTShirts.Web.Services
             return user;
         }
 
-        public void AddItemToCart(string username, int shirtId)
+        public void AddItemToCartAsync(string username, int shirtId)
         {
             if (string.IsNullOrEmpty(username))
             {
@@ -48,7 +47,7 @@ namespace FTShirts.Web.Services
 
             var user = _context.Users
                 .Include(u => u.ShoppingCart)
-                    .ThenInclude(c => c.Items)
+                    .ThenInclude(c => c!.Items)
                         .ThenInclude(i => i.TShirt)
                 .FirstOrDefault(u => u.Username == username);
 
@@ -57,12 +56,9 @@ namespace FTShirts.Web.Services
                 return;
             }
 
-            if (user.ShoppingCart == null)
-            {
-                user.ShoppingCart = new ShoppingCart { Username = username };
-            }
+            user.ShoppingCart ??= new ShoppingCart { Username = username };
 
-            var itemToAdd = _catalogueService.GetItemById(shirtId);
+            var itemToAdd = _catalogueService.GetItemByIdAsync(shirtId);
             if (itemToAdd != null)
             {
                 user.ShoppingCart.AddItem(itemToAdd);

@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="FTShirts.Tests/FTShirts.Tests.csproj" Id="1d2efd99-1a2e-4a88-a124-8855a8d34eb0" />
   <Project Path="FTShirts.Web/FTShirts.Web.csproj" />
 </Solution>

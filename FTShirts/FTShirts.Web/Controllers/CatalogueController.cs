@@ -1,13 +1,8 @@
-﻿using FTShirts.Web.enums;
-using FTShirts.Web.Models;
-using FTShirts.Web.Models.CatalogueModels;
+﻿using FTShirts.Web.Models.CatalogueModels;
 using FTShirts.Web.Models.CatalogueModels.CatalogueRequest;
 using FTShirts.Web.Services;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
-using System.Drawing;
-using System.IO;
-using System.Xml.Linq;
+
 namespace FTShirts.Web.Controllers
 {
     [ApiController]
@@ -15,7 +10,8 @@ namespace FTShirts.Web.Controllers
     [Produces("application/json")]
     public class CatalogueController : ControllerBase
     {
-        private ICatalogueService _catalogueService;
+        private readonly ICatalogueService _catalogueService;
+
         public CatalogueController(ICatalogueService catalogueService)
         {
             _catalogueService = catalogueService;
@@ -24,39 +20,35 @@ namespace FTShirts.Web.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<CatalogueItem>> Index()
         {
-            return Ok(_catalogueService.GetAllItems());
+            return Ok(_catalogueService.GetAllItemsAsync());
         }
 
         [HttpGet("search")]
         public ActionResult<IEnumerable<CatalogueItem>> Search([FromQuery] string? team, [FromQuery] bool? onlyOffer, [FromQuery] IEnumerable<string>? tags)
         {
-            bool memberLogged = true;
-            if (string.IsNullOrEmpty(Request.Cookies["UserLogged"]))
-            {
-                memberLogged = false;
-            }
+            bool memberLogged = !string.IsNullOrEmpty(Request.Cookies["UserLogged"]);
 
-            return Ok(_catalogueService.SearchItems(team, onlyOffer, tags, memberLogged));
+            return Ok(_catalogueService.SearchItemsAsync(team, onlyOffer, tags, memberLogged));
         }
 
         [HttpGet("{id}")]
         public ActionResult<CatalogueItem> GetById(int id)
         {
-            var item = _catalogueService.GetItemById(id);
+            var item = _catalogueService.GetItemByIdAsync(id);
 
             if (item == null)
             {
                 return NotFound();
             }
+
             return Ok(item);
         }
 
         [HttpPost]
         public IActionResult AddItem([FromBody] AddShirtRequest request)
         {
-            _catalogueService.AddItem(request);
+            _catalogueService.AddItemAsync(request);
             return Ok();
         }
     }
 }
-

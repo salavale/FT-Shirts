@@ -1,5 +1,4 @@
 ﻿document.addEventListener("DOMContentLoaded", () => {
-
     const headerPlaceholder = document.getElementById("header-placeholder");
 
     if (headerPlaceholder) {
@@ -12,10 +11,12 @@
                 headerPlaceholder.innerHTML = html;
 
                 updateIUser();
+                updateActiveUsersCount();
             })
             .catch(error => console.error("Error inyectando el layout:", error));
     } else {
         updateIUser();
+        updateActiveUsersCount();
     }
 });
 
@@ -55,9 +56,32 @@ function updateIUser() {
 
     const btnLogoutBtn = document.getElementById("btnLogoutBtn");
     if (btnLogoutBtn) {
-        btnLogoutBtn.addEventListener("click", () => {
+        btnLogoutBtn.addEventListener("click", async () => {
+            try {
+                await fetch(`${API_URL}/api/user/logout`, {
+                    method: "DELETE",
+                    credentials: "include"
+                });
+            } catch (err) {
+                console.error("Error calling logout:", err);
+            }
             document.cookie = "UserLogged=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
             window.location.href = "/";
         });
+    }
+}
+
+async function updateActiveUsersCount(apiUrl = API_URL) {
+    const counterEl = document.getElementById("activeUsersCount");
+    if (!counterEl) return;
+
+    try {
+        const response = await fetch(`${apiUrl}/api/user/active-count`);
+        if (!response.ok) return;
+
+        const data = await response.json();
+        counterEl.textContent = data.activeUsers ?? 0;
+    } catch (err) {
+        console.error("Error fetching active users count:", err);
     }
 }

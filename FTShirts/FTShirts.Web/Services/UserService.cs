@@ -2,28 +2,30 @@
 using FTShirts.Web.Models.CartModels;
 using FTShirts.Web.Models.UserModels;
 using FTShirts.Web.Models.UserModels.UserRequest;
-using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace FTShirts.Web.Services
 {
     public class UserService : IUserService
     {
-        private readonly FTShirtsContext _ftshirts_context;
+        private readonly FTShirtsContext _context;
+        private static readonly object _activeUsersLock = new object();
+        private static readonly HashSet<string> _activeUsernames = new HashSet<string>();
 
         public UserService(FTShirtsContext context)
         {
-            _ftshirts_context = context;
+            _context = context;
         }
 
-        public bool ValidateLogin(LogRegRequest request)
+        public async Task<bool> ValidateLoginAsync(LogRegRequest request)
         {
-            return _ftshirts_context.Users
-                .Any(u => u.Username == request.Username && u.Password == request.Password);
+            return await _context.Users
+                .AnyAsync(u => u.Username == request.Username && u.Password == request.Password);
         }
 
-        public bool RegisterUser(LogRegRequest request)
+        public async Task<bool> RegisterUserAsync(LogRegRequest request)
         {
-            if (_ftshirts_context.Users.Any(u => u.Username == request.Username))
+            if (await _context.Users.AnyAsync(u => u.Username == request.Username))
             {
                 return false;
             }
@@ -33,8 +35,8 @@ namespace FTShirts.Web.Services
                 ShoppingCart = new ShoppingCart { Username = request.Username }
             };
 
-            _ftshirts_context.Users.Add(newUser);
-            _ftshirts_context.SaveChanges();
+            _context.Users.Add(newUser);
+            await _context.SaveChangesAsync();
             return true;
         }
 
@@ -45,16 +47,41 @@ namespace FTShirts.Web.Services
                 return;
             }
 
-            var user = _ftshirts_context.Users.FirstOrDefault(u => u.Username == username);
-            if (user != null && _ftshirts_context.Set<ShoppingCart>().All(c => c.Username != username))
+            var user = _context.Users.FirstOrDefault(u => u.Username == username);
+            if (user != null && _context.Set<ShoppingCart>().All(c => c.Username != username))
             {
-                _ftshirts_context.Set<ShoppingCart>().Add(new ShoppingCart { Username = username });
-                _ftshirts_context.SaveChanges();
+                _context.Set<ShoppingCart>().Add(new ShoppingCart { Username = username });
+                _context.SaveChanges();
+            }
+
+            if (user != null)
+            {
+                lock (_activeUsersLock)
+                {
+                    _activeUsernames.Add(username);
+                }
             }
         }
 
         public void LogOutUpdate(string username)
         {
+            if (string.IsNullOrEmpty(username))
+            {
+                return;
+            }
+
+            lock (_activeUsersLock)
+            {
+                _activeUsernames.Remove(username);
+            }
         }
+
+        public int GetActiveUsersCount()
+        {
+            lock (_activeUsersLock)
+            {
+                return _activeUsernames.Count;
+            }
+        }   
     }
 }

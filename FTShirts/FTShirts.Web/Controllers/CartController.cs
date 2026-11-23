@@ -1,8 +1,6 @@
 ﻿using FTShirts.Web.Models.UserModels;
-using FTShirts.Web.Models.CatalogueModels;
-using Microsoft.AspNetCore.Mvc;
-using System.Linq;
 using FTShirts.Web.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FTShirts.Web.Controllers
 {
@@ -11,7 +9,8 @@ namespace FTShirts.Web.Controllers
     [Produces("application/json")]
     public class CartController : ControllerBase
     {
-        private ICartService _cartService;
+        private readonly ICartService _cartService;
+
         public CartController(ICartService cartService)
         {
             _cartService = cartService;
@@ -20,17 +19,16 @@ namespace FTShirts.Web.Controllers
         [HttpGet]
         public ActionResult<User> GetCart()
         {
-            string username = Request.Cookies["UserLogged"];
-            return Ok(_cartService.GetCartForUser(username));
+            string? username = Request.Cookies["UserLogged"];
+            return Ok(_cartService.GetCartForUserAsync(username ?? string.Empty));
         }
-
 
         [HttpPost("add/{shirtId}")]
         public IActionResult AddToCart(int shirtId)
         {
-            string username = Request.Cookies["UserLogged"];
+            string? username = Request.Cookies["UserLogged"];
 
-            _cartService.AddItemToCart(username, shirtId);
+            _cartService.AddItemToCartAsync(username ?? string.Empty, shirtId);
             return Ok();
         }
     }

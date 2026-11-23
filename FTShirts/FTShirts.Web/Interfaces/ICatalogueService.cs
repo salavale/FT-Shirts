@@ -7,12 +7,12 @@ namespace FTShirts.Web.Services
 {
     public interface ICatalogueService
     {
-        IEnumerable<CatalogueItem> GetAllItems();
+        IEnumerable<CatalogueItem> GetAllItemsAsync();
 
-        IEnumerable<CatalogueItem> SearchItems(string? team, bool? onlyOffer, IEnumerable<string>? tags, bool? memberLogged);
+        IEnumerable<CatalogueItem> SearchItemsAsync(string? team, bool? onlyOffer, IEnumerable<string>? tags, bool? memberLogged);
 
-        CatalogueItem? GetItemById(int id);
+        CatalogueItem? GetItemByIdAsync(int id);
 
-        void AddItem(AddShirtRequest request);
+        public void AddItemAsync(AddShirtRequest request);
     }
 }
